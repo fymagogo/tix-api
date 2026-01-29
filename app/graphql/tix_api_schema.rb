@@ -4,6 +4,9 @@ class TixApiSchema < GraphQL::Schema
   mutation(Types::MutationType)
   query(Types::QueryType)
 
+  # Enable Dataloader for batching
+  use GraphQL::Dataloader
+
   # Error handling
   rescue_from(ActiveRecord::RecordNotFound) do |err, _obj, _args, _ctx, _field|
     raise GraphQL::ExecutionError.new(

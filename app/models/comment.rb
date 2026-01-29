@@ -3,7 +3,7 @@
 class Comment < ApplicationRecord
   audited associated_with: :ticket
 
-  belongs_to :ticket
+  belongs_to :ticket, counter_cache: true
   belongs_to :author, polymorphic: true
   has_many_attached :attachments
 

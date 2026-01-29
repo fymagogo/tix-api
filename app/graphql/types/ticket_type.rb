@@ -11,11 +11,11 @@ module Types
     field :status, String, null: false
     field :customer, Types::CustomerType, null: false
     field :assigned_agent, Types::AgentType, null: true
-    field :comments, [Types::CommentType], null: false
-    field :status_history, [Types::StatusChangeType], null: false
-    field :history, [Types::HistoryEventType], null: false, description: "Human-readable history events"
+    field :comments, [Types::CommentType], null: false, complexity: 10
+    field :status_history, [Types::StatusChangeType], null: false, complexity: 5
+    field :history, [Types::HistoryEventType], null: false, description: "Human-readable history events", complexity: 15
     field :can_comment, Boolean, null: false, description: "Whether the current user can add a comment"
-    field :attachments, [Types::AttachmentType], null: false, description: "File attachments"
+    field :attachments, [Types::AttachmentType], null: false, description: "File attachments", complexity: 5
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
     field :closed_at, GraphQL::Types::ISO8601DateTime, null: true

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_29_014759) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_29_040221) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -152,6 +152,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_29_014759) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "ticket_number", null: false
+    t.integer "comments_count", default: 0, null: false
     t.index ["assigned_agent_id"], name: "index_tickets_on_assigned_agent_id"
     t.index ["created_at"], name: "index_tickets_on_created_at"
     t.index ["customer_id"], name: "index_tickets_on_customer_id"
