@@ -20,7 +20,6 @@ module Resolvers
         closed_tickets: Ticket.closed.count,
         unassigned_tickets: Ticket.where(assigned_agent_id: nil).count,
         tickets_by_status: tickets_by_status,
-        tickets_by_priority: tickets_by_priority,
         average_resolution_time_hours: average_resolution_time(closed_tickets_with_times),
         tickets_created_today: Ticket.where("created_at >= ?", today).count,
         tickets_closed_today: tickets_closed_since(today),
@@ -40,12 +39,6 @@ module Resolvers
     def tickets_by_status
       Ticket.group(:status).count.map do |status, count|
         { status: status, count: count }
-      end
-    end
-
-    def tickets_by_priority
-      Ticket.group(:priority).count.map do |priority, count|
-        { priority: priority || "normal", count: count }
       end
     end
 

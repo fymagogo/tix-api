@@ -9,7 +9,6 @@ module Types
     field :closed_tickets, Integer, null: false
     field :unassigned_tickets, Integer, null: false
     field :tickets_by_status, [Types::StatusCountType], null: false
-    field :tickets_by_priority, [Types::PriorityCountType], null: false
     field :average_resolution_time_hours, Float, null: true
     field :tickets_created_today, Integer, null: false
     field :tickets_closed_today, Integer, null: false
