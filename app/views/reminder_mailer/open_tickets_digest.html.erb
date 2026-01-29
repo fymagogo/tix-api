@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    h1 { color: #2563eb; font-size: 24px; margin-bottom: 20px; }
+    .ticket-list { margin: 20px 0; }
+    .ticket { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+    .ticket-subject { font-weight: 600; color: #111827; margin-bottom: 4px; }
+    .ticket-meta { font-size: 14px; color: #6b7280; }
+    .status { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+    .status-new { background: #dbeafe; color: #1d4ed8; }
+    .status-agent_assigned { background: #fef3c7; color: #d97706; }
+    .status-in_progress { background: #d1fae5; color: #059669; }
+    .status-hold { background: #fee2e2; color: #dc2626; }
+    .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 14px; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Good morning, <%= @agent.name %>!</h1>
+    
+    <p>You have <strong><%= @ticket_count %></strong> open <%= 'ticket'.pluralize(@ticket_count) %> that need your attention:</p>
+    
+    <div class="ticket-list">
+      <% @tickets.each do |ticket| %>
+        <div class="ticket">
+          <div class="ticket-subject">
+            #<%= ticket.ticket_number %>: <%= ticket.subject %>
+          </div>
+          <div class="ticket-meta">
+            <span class="status status-<%= ticket.status %>"><%= ticket.status.humanize %></span>
+            &bull; <%= ticket.customer.name %>
+            &bull; Created <%= time_ago_in_words(ticket.created_at) %> ago
+          </div>
+        </div>
+      <% end %>
+    </div>
+    
+    <div class="footer">
+      <p>This is an automated daily reminder from Tix Support System.</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,3 @@
+# Gemfile.lock will be created when you run bundle install
+# This is a placeholder to remind you to run:
+#   cd tix-api && bundle install

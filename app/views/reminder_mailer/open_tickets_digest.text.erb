@@ -1,0 +1,13 @@
+Good morning, <%= @agent.name %>!
+
+You have <%= @ticket_count %> open <%= 'ticket'.pluralize(@ticket_count) %> that need your attention:
+
+<% @tickets.each do |ticket| %>
+#<%= ticket.ticket_number %>: <%= ticket.subject %>
+  Status: <%= ticket.status.humanize %>
+  Customer: <%= ticket.customer.name %>
+  Created: <%= time_ago_in_words(ticket.created_at) %> ago
+
+<% end %>
+---
+This is an automated daily reminder from Tix Support System.

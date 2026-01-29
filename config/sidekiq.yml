@@ -1,0 +1,6 @@
+---
+:concurrency: 5
+:queues:
+  - [ticket_assignment, 10]
+  - [mailers, 5]
+  - [exports, 3]
