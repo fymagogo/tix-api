@@ -49,6 +49,12 @@ class TixApiSchema < GraphQL::Schema
   max_complexity 200
   max_depth 15
 
+  # Timeout for queries (10 seconds)
+  default_max_page_size 50
+
+  # Disable introspection in production for security
+  disable_introspection_entry_points if Rails.env.production?
+
   # Orphan types
   orphan_types Types::CustomerType, Types::AgentType
 end

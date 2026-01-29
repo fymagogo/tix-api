@@ -11,6 +11,13 @@ class Rack::Attack
     end
   end
 
+  # Throttle password reset requests to prevent email enumeration
+  throttle("password_reset/ip", limit: 3, period: 15.minutes) do |req|
+    if req.path.include?("/password") && req.post?
+      req.ip
+    end
+  end
+
   # Throttle GraphQL mutations
   throttle("graphql/ip", limit: 60, period: 1.minute) do |req|
     if req.path == "/graphql" && req.post?

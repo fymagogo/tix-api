@@ -26,6 +26,28 @@ class TicketPolicy < ApplicationPolicy
     agent?
   end
 
+  def reassign?
+    # Only admin or currently assigned agent can reassign
+    agent? && (user.admin? || record.assigned_agent == user)
+  end
+
+  def delete?
+    # Only admins can delete tickets
+    admin?
+  end
+
+  def bulk_update?
+    admin?
+  end
+
+  def export?
+    agent?
+  end
+
+  def admin?
+    user.is_a?(Agent) && user.admin?
+  end
+
   class Scope < Scope
     def resolve
       if user.is_a?(Agent)

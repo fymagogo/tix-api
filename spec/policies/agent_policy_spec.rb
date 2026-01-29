@@ -31,9 +31,14 @@ RSpec.describe AgentPolicy do
   end
 
   describe "#invite?" do
-    it "allows agents to invite" do
-      policy = described_class.new(agent, Agent)
+    it "allows admins to invite" do
+      policy = described_class.new(admin, Agent)
       expect(policy.invite?).to be true
+    end
+
+    it "denies non-admin agents from inviting" do
+      policy = described_class.new(agent, Agent)
+      expect(policy.invite?).to be false
     end
 
     it "denies customers from inviting" do

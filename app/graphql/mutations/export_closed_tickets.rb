@@ -35,7 +35,11 @@ module Mutations
     def apply_filters(scope, filter)
       scope = scope.where(assigned_agent_id: current_user.id) if filter[:assigned_to_me]
       scope = scope.where(customer_id: filter[:customer_id]) if filter[:customer_id].present?
-      scope = scope.where("subject ILIKE ?", "%#{filter[:search]}%") if filter[:search].present?
+      if filter[:search].present?
+        search_term = filter[:search].to_s.strip[0, 100]
+        search_term = ActiveRecord::Base.sanitize_sql_like(search_term)
+        scope = scope.where("subject ILIKE ?", "%#{search_term}%")
+      end
       scope = scope.where("created_at >= ?", filter[:created_after]) if filter[:created_after].present?
       scope = scope.where("created_at <= ?", filter[:created_before]) if filter[:created_before].present?
       scope

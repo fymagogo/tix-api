@@ -19,6 +19,11 @@ class Agent < ApplicationRecord
 
   scope :active, -> { where(invitation_accepted_at: ..Time.current).or(where(invitation_token: nil)) }
 
+  # Convenience method for checking admin status
+  def admin?
+    is_admin
+  end
+
   # Round-robin assignment: get non-admin agent with oldest last_assigned_at
   def self.next_for_assignment
     active.where(is_admin: false).order(last_assigned_at: :asc).first
