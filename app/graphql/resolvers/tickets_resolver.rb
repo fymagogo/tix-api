@@ -13,6 +13,7 @@ module Resolvers
       authorize_record(Ticket, :index?)
 
       scope = policy_scope(Ticket)
+      scope = apply_eager_loading(scope)
       scope = apply_filters(scope, filter) if filter
       scope = apply_ordering(scope, order_by)
 
@@ -25,6 +26,10 @@ module Resolvers
     end
 
     private
+
+    def apply_eager_loading(scope)
+      scope.includes(:customer, :assigned_agent, :comments, attachments_attachments: :blob)
+    end
 
     def apply_filters(scope, filter)
       scope = scope.where(status: filter[:status]) if filter[:status].present?

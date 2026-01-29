@@ -25,7 +25,7 @@ module Types
     end
 
     def ticket(id:)
-      ticket = Ticket.find(id)
+      ticket = Ticket.includes(:customer, :assigned_agent, :comments, attachments_attachments: :blob).find(id)
       authorize_record(ticket, :show?)
       ticket
     end
@@ -35,7 +35,8 @@ module Types
       return nil unless user
 
       normalized = ticket_number.to_s.upcase
-      ticket = Ticket.find_by(ticket_number: normalized)
+      ticket = Ticket.includes(:customer, :assigned_agent, :comments, attachments_attachments: :blob)
+                     .find_by(ticket_number: normalized)
       return nil unless ticket
 
       policy = Pundit.policy!(user, ticket)

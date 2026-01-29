@@ -30,8 +30,8 @@ RSpec.describe TicketExporter do
   end
 
   describe "::SYNC_THRESHOLD" do
-    it "is set to 100" do
-      expect(described_class::SYNC_THRESHOLD).to eq(100)
+    it "defaults to 1 when ENV not set" do
+      expect(described_class::SYNC_THRESHOLD).to eq(ENV.fetch("EXPORT_SYNC_THRESHOLD", 1).to_i)
     end
   end
 

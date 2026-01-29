@@ -31,7 +31,10 @@ Rails.application.configure do
     api_key: ENV["SENDGRID_API_KEY"],
     raise_delivery_errors: true
   }
-  config.action_mailer.default_url_options = { host: ENV["APP_HOST"] }
+  config.action_mailer.default_url_options = { host: ENV["APP_HOST"], protocol: "https" }
+
+  # Routes default URL options (for ActiveStorage URLs)
+  Rails.application.routes.default_url_options = { host: ENV["APP_HOST"], protocol: "https" }
 
   # i18n
   config.i18n.fallbacks = true
