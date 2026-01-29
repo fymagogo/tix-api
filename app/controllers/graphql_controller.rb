@@ -11,7 +11,7 @@ class GraphQLController < ApplicationController
     context = {
       current_user: current_user,
       current_customer: current_customer,
-      current_agent: current_agent
+      current_agent: current_agent,
     }
 
     result = ::TixApiSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
@@ -49,7 +49,7 @@ class GraphQLController < ApplicationController
 
     render json: {
       errors: [{ message: error.message, backtrace: error.backtrace.first(10) }],
-      data: {}
+      data: {},
     }, status: :internal_server_error
   end
 end

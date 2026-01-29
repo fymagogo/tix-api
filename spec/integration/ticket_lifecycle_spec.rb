@@ -20,7 +20,7 @@ RSpec.describe "Ticket Lifecycle Integration", type: :graphql do
       result = execute_graphql(
         query: create_ticket_query,
         variables: { subject: "Cannot login", description: "Getting error on login page" },
-        context: { current_user: customer }
+        context: { current_user: customer },
       )
 
       ticket_data = result.dig("data", "createTicket", "ticket")
@@ -41,7 +41,7 @@ RSpec.describe "Ticket Lifecycle Integration", type: :graphql do
       result = execute_graphql(
         query: assign_query,
         variables: { ticketId: ticket_id, agentId: agent.id },
-        context: { current_user: admin }
+        context: { current_user: admin },
       )
 
       expect(result.dig("data", "assignTicket", "ticket", "assignedAgent", "id")).to eq(agent.id)
@@ -59,7 +59,7 @@ RSpec.describe "Ticket Lifecycle Integration", type: :graphql do
       result = execute_graphql(
         query: transition_query,
         variables: { ticketId: ticket_id, event: "start_progress" },
-        context: { current_user: agent }
+        context: { current_user: agent },
       )
 
       expect(result.dig("data", "transitionTicket", "ticket", "status")).to eq("in_progress")
@@ -77,7 +77,7 @@ RSpec.describe "Ticket Lifecycle Integration", type: :graphql do
       result = execute_graphql(
         query: add_comment_query,
         variables: { ticketId: ticket_id, body: "Please try clearing your browser cache." },
-        context: { current_user: agent }
+        context: { current_user: agent },
       )
 
       expect(result.dig("data", "addComment", "comment", "body")).to eq("Please try clearing your browser cache.")
@@ -86,7 +86,7 @@ RSpec.describe "Ticket Lifecycle Integration", type: :graphql do
       result = execute_graphql(
         query: add_comment_query,
         variables: { ticketId: ticket_id, body: "That worked, thank you!" },
-        context: { current_user: customer }
+        context: { current_user: customer },
       )
 
       expect(result.dig("data", "addComment", "comment", "body")).to eq("That worked, thank you!")
@@ -95,7 +95,7 @@ RSpec.describe "Ticket Lifecycle Integration", type: :graphql do
       result = execute_graphql(
         query: transition_query,
         variables: { ticketId: ticket_id, event: "close" },
-        context: { current_user: agent }
+        context: { current_user: agent },
       )
 
       expect(result.dig("data", "transitionTicket", "ticket", "status")).to eq("closed")
@@ -115,7 +115,7 @@ RSpec.describe "Ticket Lifecycle Integration", type: :graphql do
       result = execute_graphql(
         query: ticket_query,
         variables: { id: ticket_id },
-        context: { current_user: customer }
+        context: { current_user: customer },
       )
 
       final_ticket = result.dig("data", "ticket")
@@ -146,7 +146,7 @@ RSpec.describe "Ticket Lifecycle Integration", type: :graphql do
       result = execute_graphql(
         query: transition_query,
         variables: { ticketId: ticket.id, event: "put_on_hold" },
-        context: { current_user: agent }
+        context: { current_user: agent },
       )
       expect(result.dig("data", "transitionTicket", "ticket", "status")).to eq("hold")
 
@@ -154,7 +154,7 @@ RSpec.describe "Ticket Lifecycle Integration", type: :graphql do
       result = execute_graphql(
         query: transition_query,
         variables: { ticketId: ticket.id, event: "resume" },
-        context: { current_user: agent }
+        context: { current_user: agent },
       )
       expect(result.dig("data", "transitionTicket", "ticket", "status")).to eq("in_progress")
 
@@ -162,7 +162,7 @@ RSpec.describe "Ticket Lifecycle Integration", type: :graphql do
       result = execute_graphql(
         query: transition_query,
         variables: { ticketId: ticket.id, event: "close" },
-        context: { current_user: agent }
+        context: { current_user: agent },
       )
       expect(result.dig("data", "transitionTicket", "ticket", "status")).to eq("closed")
     end
@@ -184,7 +184,7 @@ RSpec.describe "Ticket Lifecycle Integration", type: :graphql do
       result = execute_graphql(
         query: ticket_query,
         variables: { id: customer_ticket1.id },
-        context: { current_user: customer }
+        context: { current_user: customer },
       )
 
       expect(result.dig("data", "ticket", "subject")).to eq("First issue")
@@ -193,7 +193,7 @@ RSpec.describe "Ticket Lifecycle Integration", type: :graphql do
       result = execute_graphql(
         query: ticket_query,
         variables: { id: other_customer_ticket.id },
-        context: { current_user: customer }
+        context: { current_user: customer },
       )
 
       expect(result["errors"].first["message"]).to eq("Not authorized")
@@ -219,7 +219,7 @@ RSpec.describe "Ticket Lifecycle Integration", type: :graphql do
       result = execute_graphql(
         query: assign_query,
         variables: { ticketId: ticket.id, agentId: other_agent.id },
-        context: { current_user: admin }
+        context: { current_user: admin },
       )
 
       expect(result.dig("data", "assignTicket", "ticket", "assignedAgent", "id")).to eq(other_agent.id)

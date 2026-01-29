@@ -10,7 +10,7 @@ class TicketMailer < ApplicationMailer
 
     mail(
       to: @customer.email,
-      subject: "Ticket ##{ticket.ticket_number} status updated to #{new_status.humanize}"
+      subject: "Ticket ##{ticket.ticket_number} status updated to #{new_status.humanize}",
     )
   end
 
@@ -21,7 +21,7 @@ class TicketMailer < ApplicationMailer
 
     mail(
       to: @customer.email,
-      subject: "Ticket ##{ticket.ticket_number} has been resolved"
+      subject: "Ticket ##{ticket.ticket_number} has been resolved",
     )
   end
 end

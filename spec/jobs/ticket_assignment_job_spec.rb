@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe TicketAssignmentJob, type: :job do
+RSpec.describe TicketAssignmentJob do
   let(:agent) { create(:agent) }
   let(:ticket) { create(:ticket) }
 
@@ -9,10 +9,10 @@ RSpec.describe TicketAssignmentJob, type: :job do
       before { agent }
 
       it "assigns an agent to the ticket" do
-        expect {
+        expect do
           described_class.perform_now(ticket.id)
           ticket.reload
-        }.to change { ticket.assigned_agent }.from(nil).to(agent)
+        end.to change(ticket, :assigned_agent).from(nil).to(agent)
       end
 
       it "transitions ticket to agent_assigned" do
@@ -22,10 +22,10 @@ RSpec.describe TicketAssignmentJob, type: :job do
       end
 
       it "updates agent's last_assigned_at" do
-        expect {
+        expect do
           described_class.perform_now(ticket.id)
           agent.reload
-        }.to change { agent.last_assigned_at }
+        end.to(change(agent, :last_assigned_at))
       end
     end
 
@@ -68,7 +68,7 @@ RSpec.describe TicketAssignmentJob, type: :job do
         allow_any_instance_of(Ticket).to receive(:assign_agent!) do
           raise AASM::InvalidTransition.new(Ticket.new, :assign_agent, :default)
         end
-        
+
         # Just verify it doesn't raise
         expect { described_class.perform_now(ticket.id) }.not_to raise_error
       end

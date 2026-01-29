@@ -4,7 +4,7 @@ module Types
   class PriorityCountType < Types::BaseObject
     description "Ticket count by priority"
 
-    field :priority, String, null: false
     field :count, Integer, null: false
+    field :priority, String, null: false
   end
 end

@@ -4,12 +4,12 @@ module Types
   class AttachmentType < Types::BaseObject
     description "A file attachment"
 
-    field :id, ID, null: false
-    field :filename, String, null: false
-    field :content_type, String, null: false
     field :byte_size, Integer, null: false
-    field :url, String, null: false
+    field :content_type, String, null: false
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
+    field :filename, String, null: false
+    field :id, ID, null: false
+    field :url, String, null: false
 
     def id
       object.id.to_s
@@ -19,8 +19,6 @@ module Types
       Rails.application.routes.url_helpers.rails_blob_url(object)
     end
 
-    def created_at
-      object.created_at
-    end
+    delegate :created_at, to: :object
   end
 end

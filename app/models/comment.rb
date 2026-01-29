@@ -22,12 +22,12 @@ class Comment < ApplicationRecord
     errors.add(:base, "Cannot comment until an agent has responded")
   end
 
-  ALLOWED_CONTENT_TYPES = %w[
-    image/jpeg
-    image/png
-    image/gif
-    image/webp
-    application/pdf
+  ALLOWED_CONTENT_TYPES = [
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/webp",
+    "application/pdf",
   ].freeze
 
   MAX_ATTACHMENT_SIZE = 10.megabytes
@@ -40,9 +40,7 @@ class Comment < ApplicationRecord
         errors.add(:attachments, "must be an image (JPEG, PNG, GIF, WebP) or PDF")
       end
 
-      if attachment.byte_size > MAX_ATTACHMENT_SIZE
-        errors.add(:attachments, "must be less than 10MB")
-      end
+      errors.add(:attachments, "must be less than 10MB") if attachment.byte_size > MAX_ATTACHMENT_SIZE
     end
   end
 end

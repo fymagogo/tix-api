@@ -3,19 +3,19 @@
 module Types
   class MutationType < Types::BaseObject
     # Auth mutations
-    field :sign_up, mutation: Mutations::SignUp
-    field :sign_in, mutation: Mutations::SignIn
     field :request_password_reset, mutation: Mutations::RequestPasswordReset
     field :reset_password, mutation: Mutations::ResetPassword
+    field :sign_in, mutation: Mutations::SignIn
+    field :sign_up, mutation: Mutations::SignUp
 
     # Agent invitation mutations
-    field :invite_agent, mutation: Mutations::InviteAgent
     field :accept_invite, mutation: Mutations::AcceptInvite
+    field :invite_agent, mutation: Mutations::InviteAgent
 
     # Ticket mutations
+    field :assign_ticket, mutation: Mutations::AssignTicket
     field :create_ticket, mutation: Mutations::CreateTicket
     field :transition_ticket, mutation: Mutations::TransitionTicket
-    field :assign_ticket, mutation: Mutations::AssignTicket
 
     # Comment mutations
     field :add_comment, mutation: Mutations::AddComment

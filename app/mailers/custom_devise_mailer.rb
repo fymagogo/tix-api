@@ -2,13 +2,14 @@
 
 class CustomDeviseMailer < Devise::Mailer
   include Devise::Controllers::UrlHelpers
+
   default template_path: "devise/mailer"
 
   def reset_password_instructions(record, token, opts = {})
     @token = token
     @resource = record
     @frontend_url = build_frontend_reset_url(record, token)
-    
+
     opts[:subject] = "Reset password instructions"
     devise_mail(record, :reset_password_instructions, opts)
   end
@@ -17,7 +18,7 @@ class CustomDeviseMailer < Devise::Mailer
     @token = token
     @resource = record
     @frontend_url = build_frontend_invite_url(record, token)
-    
+
     opts[:subject] = "You've been invited to join Tix"
     devise_mail(record, :invitation_instructions, opts)
   end

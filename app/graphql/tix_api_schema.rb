@@ -8,29 +8,29 @@ class TixApiSchema < GraphQL::Schema
   use GraphQL::Dataloader
 
   # Error handling
-  rescue_from(ActiveRecord::RecordNotFound) do |err, _obj, _args, _ctx, _field|
+  rescue_from(ActiveRecord::RecordNotFound) do |_err, _obj, _args, _ctx, _field|
     raise GraphQL::ExecutionError.new(
       "Record not found",
-      extensions: { code: "NOT_FOUND" }
+      extensions: { code: "NOT_FOUND" },
     )
   end
 
   rescue_from(Pundit::NotAuthorizedError) do |_err, _obj, _args, _ctx, _field|
     raise GraphQL::ExecutionError.new(
       "Not authorized",
-      extensions: { code: "UNAUTHORIZED" }
+      extensions: { code: "UNAUTHORIZED" },
     )
   end
 
   rescue_from(AASM::InvalidTransition) do |err, _obj, _args, _ctx, _field|
     raise GraphQL::ExecutionError.new(
       "Invalid status transition: #{err.message}",
-      extensions: { code: "INVALID_TRANSITION" }
+      extensions: { code: "INVALID_TRANSITION" },
     )
   end
 
   # Union/Interface resolution
-  def self.resolve_type(abstract_type, object, _context)
+  def self.resolve_type(_abstract_type, object, _context)
     case object
     when Customer
       Types::CustomerType

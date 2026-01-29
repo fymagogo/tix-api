@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :comment do
-    association :ticket
-    association :author, factory: :agent
+    ticket
+    author factory: [:agent]
     body { "This is a test comment." }
   end
 end

@@ -4,11 +4,11 @@ module Mutations
   class AssignTicket < BaseMutation
     description "Manually assign a ticket to an agent (admin only)"
 
-    argument :ticket_id, ID, required: true
     argument :agent_id, ID, required: true
+    argument :ticket_id, ID, required: true
 
-    field :ticket, Types::TicketType, null: true
     field :errors, [Types::ErrorType], null: false
+    field :ticket, Types::TicketType, null: true
 
     def resolve(ticket_id:, agent_id:)
       require_admin!

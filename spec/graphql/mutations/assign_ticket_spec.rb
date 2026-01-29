@@ -34,9 +34,9 @@ RSpec.describe Mutations::AssignTicket, type: :graphql do
     end
 
     it "updates agent last_assigned_at" do
-      expect {
+      expect do
         execute_graphql(query: query, variables: variables, context: { current_user: admin })
-      }.to change { agent.reload.last_assigned_at }
+      end.to(change { agent.reload.last_assigned_at })
     end
   end
 

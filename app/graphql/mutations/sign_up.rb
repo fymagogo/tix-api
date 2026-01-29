@@ -10,15 +10,15 @@ module Mutations
     argument :password_confirmation, String, required: true
 
     field :customer, Types::CustomerType, null: true
-    field :token, String, null: true
     field :errors, [Types::ErrorType], null: false
+    field :token, String, null: true
 
     def resolve(email:, name:, password:, password_confirmation:)
       customer = Customer.new(
         email: email,
         name: name,
         password: password,
-        password_confirmation: password_confirmation
+        password_confirmation: password_confirmation,
       )
 
       if customer.save

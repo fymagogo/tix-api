@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "boot"
 
 require "rails"
@@ -45,7 +47,7 @@ module TixApi
     config.filter_parameters += [
       :password, :password_confirmation, :token, :secret,
       :authorization, :bearer, :api_key, :access_token,
-      :refresh_token, :credit_card, :ssn
+      :refresh_token, :credit_card, :ssn,
     ]
   end
 end

@@ -22,7 +22,7 @@ RSpec.describe Mutations::ResetPassword, type: :graphql do
           token: reset_token,
           password: "newpassword123",
           passwordConfirmation: "newpassword123",
-          userType: "customer"
+          userType: "customer",
         }
       end
 
@@ -46,7 +46,7 @@ RSpec.describe Mutations::ResetPassword, type: :graphql do
           token: reset_token,
           password: "newpassword123",
           passwordConfirmation: "different",
-          userType: "customer"
+          userType: "customer",
         }
       end
 
@@ -65,7 +65,7 @@ RSpec.describe Mutations::ResetPassword, type: :graphql do
           token: "invalid-token",
           password: "newpassword123",
           passwordConfirmation: "newpassword123",
-          userType: "customer"
+          userType: "customer",
         }
       end
 
@@ -87,7 +87,7 @@ RSpec.describe Mutations::ResetPassword, type: :graphql do
         token: reset_token,
         password: "newpassword123",
         passwordConfirmation: "newpassword123",
-        userType: "agent"
+        userType: "agent",
       }
     end
 

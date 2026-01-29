@@ -10,20 +10,20 @@ RSpec.describe TicketExporter do
     it "generates CSV with headers" do
       csv = described_class.generate(Ticket.closed)
       lines = csv.split("\n")
-      
+
       expect(lines.first).to include("ID", "Subject", "Status", "Customer Email")
     end
 
     it "includes all closed tickets" do
       csv = described_class.generate(Ticket.closed)
-      
+
       expect(csv).to include("First ticket")
       expect(csv).to include("Second ticket")
     end
 
     it "includes ticket data" do
       csv = described_class.generate(Ticket.closed)
-      
+
       expect(csv).to include(customer.email)
       expect(csv).to include(agent.name)
     end

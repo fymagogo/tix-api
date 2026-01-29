@@ -1,0 +1,219 @@
+require:
+  - rubocop-rails
+  - rubocop-rspec
+  - rubocop-rspec_rails
+  - rubocop-factory_bot
+  - rubocop-graphql
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.3
+  SuggestExtensions: false
+  Exclude:
+    - 'bin/**/*'
+    - 'db/schema.rb'
+    - 'db/migrate/**/*'
+    - 'vendor/**/*'
+    - 'node_modules/**/*'
+    - 'tmp/**/*'
+    - 'log/**/*'
+    - 'coverage/**/*'
+
+# Disable Capybara cops - causes bugs with Ruby 4.0
+Capybara:
+  Enabled: false
+
+# Layout
+Layout/LineLength:
+  Max: 120
+  AllowedPatterns: ['^\s*#']
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
+
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+
+# Metrics
+Metrics/AbcSize:
+  Max: 35
+  Exclude:
+    - 'app/graphql/**/*'
+
+Metrics/MethodLength:
+  Max: 30
+  Exclude:
+    - 'db/seeds.rb'
+    - 'spec/**/*'
+    - 'app/graphql/**/*'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - 'config/**/*'
+    - 'app/graphql/**/*'
+    - 'app/services/**/*'
+
+Metrics/CyclomaticComplexity:
+  Max: 12
+
+Metrics/PerceivedComplexity:
+  Max: 12
+
+Metrics/ModuleLength:
+  Exclude:
+    - 'app/graphql/**/*'
+
+Metrics/BlockNesting:
+  Max: 4
+
+Metrics/ParameterLists:
+  Max: 6
+
+Metrics/ClassLength:
+  Max: 150
+  Exclude:
+    - 'app/graphql/**/*'
+
+# Style
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  EnforcedStyle: always
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/SymbolArray:
+  EnforcedStyle: brackets
+
+Style/WordArray:
+  EnforcedStyle: brackets
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/HashSyntax:
+  EnforcedShorthandSyntax: either
+
+# Rails
+Rails/SkipsModelValidations:
+  Enabled: false
+
+Rails/I18nLocaleTexts:
+  Enabled: false
+
+Rails/FilePath:
+  Enabled: false
+
+Rails/UnknownEnv:
+  Environments:
+    - production
+    - development
+    - test
+    - staging
+
+Lint/UselessConstantScoping:
+  Enabled: false
+
+# RSpec
+RSpec/ExampleLength:
+  Max: 25
+  Exclude:
+    - 'spec/integration/**/*'
+
+RSpec/MultipleExpectations:
+  Max: 8
+  Exclude:
+    - 'spec/integration/**/*'
+
+RSpec/NestedGroups:
+  Max: 4
+
+RSpec/ContextWording:
+  Prefixes:
+    - when
+    - with
+    - without
+    - if
+    - unless
+    - for
+    - and
+    - as
+    - after
+    - before
+    - on
+    - the
+    - returns
+
+RSpec/DescribeClass:
+  Exclude:
+    - 'spec/integration/**/*'
+    - 'spec/requests/**/*'
+    - 'spec/graphql/**/*'
+
+RSpec/LetSetup:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/AnyInstance:
+  Enabled: false
+
+RSpec/VerifiedDoubles:
+  Enabled: false
+
+RSpec/StubbedMock:
+  Enabled: false
+
+RSpec/FilePath:
+  Enabled: false
+
+RSpec/SpecFilePathFormat:
+  Enabled: false
+
+RSpec/IndexedLet:
+  Enabled: false
+
+RSpec/ExpectActual:
+  Enabled: false
+
+RSpec/IdenticalEqualityAssertion:
+  Enabled: false
+
+FactoryBot/ExcessiveCreateList:
+  Enabled: false
+
+# GraphQL
+GraphQL/FieldDescription:
+  Enabled: false
+
+GraphQL/ArgumentDescription:
+  Enabled: false
+
+GraphQL/ObjectDescription:
+  Enabled: false
+
+GraphQL/ExtractType:
+  Enabled: false
+
+GraphQL/ExtractInputType:
+  Enabled: false
+
+GraphQL/ResolverMethodLength:
+  Max: 30

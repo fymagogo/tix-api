@@ -7,11 +7,11 @@ module Mutations
     argument :email, String, required: true
     argument :password, String, required: true
     argument :user_type, String, required: false, default_value: "customer",
-             description: "Type of user: 'customer' or 'agent'"
+                                 description: "Type of user: 'customer' or 'agent'"
 
-    field :user, Types::CommentAuthorUnion, null: true
-    field :token, String, null: true
     field :errors, [Types::ErrorType], null: false
+    field :token, String, null: true
+    field :user, Types::CommentAuthorUnion, null: true
 
     def resolve(email:, password:, user_type:)
       klass = user_type == "agent" ? Agent : Customer
@@ -21,7 +21,8 @@ module Mutations
         token = user.generate_jwt
         { user: user, token: token, errors: [] }
       else
-        { user: nil, token: nil, errors: [{ field: "base", message: "Invalid email or password", code: "INVALID_CREDENTIALS" }] }
+        { user: nil, token: nil,
+          errors: [{ field: "base", message: "Invalid email or password", code: "INVALID_CREDENTIALS" }], }
       end
     end
   end

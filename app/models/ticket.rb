@@ -21,7 +21,7 @@ class Ticket < ApplicationRecord
   validate :acceptable_attachments
 
   # Scopes
-  scope :active, -> { where(status: %w[agent_assigned in_progress hold]) }
+  scope :active, -> { where(status: ["agent_assigned", "in_progress", "hold"]) }
   scope :open, -> { where.not(status: "closed") }
   scope :closed, -> { where(status: "closed") }
 
@@ -71,7 +71,7 @@ class Ticket < ApplicationRecord
           from: changes.is_a?(Array) ? changes[0] : nil,
           to: changes.is_a?(Array) ? changes[1] : changes,
           changed_at: audit.created_at,
-          changed_by: audit.user
+          changed_by: audit.user,
         }
       end
   end
@@ -130,12 +130,12 @@ class Ticket < ApplicationRecord
     end
   end
 
-  ALLOWED_CONTENT_TYPES = %w[
-    image/jpeg
-    image/png
-    image/gif
-    image/webp
-    application/pdf
+  ALLOWED_CONTENT_TYPES = [
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/webp",
+    "application/pdf",
   ].freeze
 
   MAX_ATTACHMENT_SIZE = 10.megabytes
@@ -148,9 +148,7 @@ class Ticket < ApplicationRecord
         errors.add(:attachments, "must be an image (JPEG, PNG, GIF, WebP) or PDF")
       end
 
-      if attachment.byte_size > MAX_ATTACHMENT_SIZE
-        errors.add(:attachments, "must be less than 10MB")
-      end
+      errors.add(:attachments, "must be less than 10MB") if attachment.byte_size > MAX_ATTACHMENT_SIZE
     end
   end
 end

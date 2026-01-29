@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Comment, type: :model do
+RSpec.describe Comment do
   describe "validations" do
     subject { build(:comment) }
 

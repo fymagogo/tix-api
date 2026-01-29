@@ -5,9 +5,9 @@ module Resolvers
     type Types::Pages::TicketPageType, null: false
     description "List tickets with pagination, filtering, and sorting"
 
-    argument :pagination, Types::Inputs::PaginationInputType, required: false, default_value: {}
     argument :filter, Types::Inputs::TicketFilterInputType, required: false
     argument :order_by, Types::Inputs::TicketOrderByInputType, required: false
+    argument :pagination, Types::Inputs::PaginationInputType, required: false, default_value: {}
 
     def resolve(pagination:, filter: nil, order_by: nil)
       authorize_record(Ticket, :index?)
@@ -21,7 +21,7 @@ module Resolvers
 
       {
         items: paginated,
-        page_info: build_page_info(paginated)
+        page_info: build_page_info(paginated),
       }
     end
 
@@ -41,8 +41,8 @@ module Resolvers
         search_term = ActiveRecord::Base.sanitize_sql_like(search_term)
         scope = scope.where("subject ILIKE :q OR ticket_number ILIKE :q", q: "%#{search_term}%")
       end
-      scope = scope.where("created_at >= ?", filter[:created_after]) if filter[:created_after].present?
-      scope = scope.where("created_at <= ?", filter[:created_before]) if filter[:created_before].present?
+      scope = scope.where(created_at: (filter[:created_after])..) if filter[:created_after].present?
+      scope = scope.where(created_at: ..(filter[:created_before])) if filter[:created_before].present?
       scope
     end
 
@@ -59,7 +59,7 @@ module Resolvers
         total_count: paginated.total_count,
         has_next_page: !paginated.last_page?,
         has_previous_page: !paginated.first_page?,
-        per_page: paginated.limit_value
+        per_page: paginated.limit_value,
       }
     end
 

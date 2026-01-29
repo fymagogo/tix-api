@@ -21,8 +21,8 @@ RSpec.describe Mutations::SignUp, type: :graphql do
           email: "new@test.com",
           name: "New Customer",
           password: "password123",
-          passwordConfirmation: "password123"
-        }
+          passwordConfirmation: "password123",
+        },
       )
 
       data = result["data"]["signUp"]
@@ -41,8 +41,8 @@ RSpec.describe Mutations::SignUp, type: :graphql do
           email: "new@test.com",
           name: "New Customer",
           password: "password123",
-          passwordConfirmation: "different"
-        }
+          passwordConfirmation: "different",
+        },
       )
 
       data = result["data"]["signUp"]
@@ -61,8 +61,8 @@ RSpec.describe Mutations::SignUp, type: :graphql do
           email: "existing@test.com",
           name: "New Customer",
           password: "password123",
-          passwordConfirmation: "password123"
-        }
+          passwordConfirmation: "password123",
+        },
       )
 
       data = result["data"]["signUp"]
@@ -78,8 +78,8 @@ RSpec.describe Mutations::SignUp, type: :graphql do
           email: "new@test.com",
           name: "New Customer",
           password: "short",
-          passwordConfirmation: "short"
-        }
+          passwordConfirmation: "short",
+        },
       )
 
       data = result["data"]["signUp"]

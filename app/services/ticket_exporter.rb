@@ -17,7 +17,7 @@ class TicketExporter
         "Assigned Agent",
         "Created At",
         "Closed At",
-        "Comments Count"
+        "Comments Count",
       ]
 
       tickets.includes(:customer, :assigned_agent, :comments).find_each do |ticket|
@@ -31,7 +31,7 @@ class TicketExporter
           ticket.assigned_agent&.name,
           ticket.created_at.iso8601,
           ticket.closed_at&.iso8601,
-          ticket.comments.count
+          ticket.comments.count,
         ]
       end
     end

@@ -12,7 +12,7 @@ Rails.application.configure do
       user_id: event.payload[:user_id],
       ip: event.payload[:ip],
       host: event.payload[:host],
-      time: Time.current.iso8601
+      time: Time.current.iso8601,
     }.compact
   end
 
@@ -26,7 +26,7 @@ Rails.application.configure do
       user_type: controller.try(:current_user)&.class&.name,
       user_id: controller.try(:current_user)&.id,
       ip: controller.request.remote_ip,
-      host: controller.request.host
+      host: controller.request.host,
     }
   end
 end

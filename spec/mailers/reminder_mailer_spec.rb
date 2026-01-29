@@ -2,12 +2,16 @@
 
 require "rails_helper"
 
-RSpec.describe ReminderMailer, type: :mailer do
+RSpec.describe ReminderMailer do
   describe "#open_tickets_digest" do
     let(:agent) { create(:agent, name: "John Doe", email: "john@example.com") }
     let(:customer) { create(:customer, name: "Jane Customer") }
-    let!(:ticket1) { create(:ticket, subject: "First Issue", customer: customer, assigned_agent: agent, status: "in_progress") }
-    let!(:ticket2) { create(:ticket, subject: "Second Issue", customer: customer, assigned_agent: agent, status: "hold") }
+    let!(:ticket1) do
+      create(:ticket, subject: "First Issue", customer: customer, assigned_agent: agent, status: "in_progress")
+    end
+    let!(:ticket2) do
+      create(:ticket, subject: "Second Issue", customer: customer, assigned_agent: agent, status: "hold")
+    end
 
     let(:tickets) { Ticket.where(id: [ticket1.id, ticket2.id]) }
     let(:mail) { described_class.open_tickets_digest(agent, tickets) }
@@ -46,8 +50,8 @@ RSpec.describe ReminderMailer, type: :mailer do
 
     it "renders both HTML and text parts" do
       expect(mail.parts.map(&:content_type)).to include(
-        a_string_matching(/text\/html/),
-        a_string_matching(/text\/plain/)
+        a_string_matching(%r{text/html}),
+        a_string_matching(%r{text/plain}),
       )
     end
   end

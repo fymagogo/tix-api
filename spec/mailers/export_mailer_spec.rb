@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe ExportMailer, type: :mailer do
+RSpec.describe ExportMailer do
   describe "#closed_tickets" do
     let(:agent) { create(:agent, email: "agent@tix.test") }
     let(:csv_data) { "ID,Subject,Status\n1,Test,closed" }

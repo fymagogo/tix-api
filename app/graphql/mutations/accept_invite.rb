@@ -9,14 +9,14 @@ module Mutations
     argument :password_confirmation, String, required: true
 
     field :agent, Types::AgentType, null: true
-    field :token, String, null: true
     field :errors, [Types::ErrorType], null: false
+    field :token, String, null: true
 
     def resolve(invitation_token:, password:, password_confirmation:)
       agent = Agent.accept_invitation!(
         invitation_token: invitation_token,
         password: password,
-        password_confirmation: password_confirmation
+        password_confirmation: password_confirmation,
       )
 
       if agent.errors.empty?

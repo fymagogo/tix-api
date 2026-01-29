@@ -21,19 +21,19 @@ module Resolvers
         unassigned_tickets: Ticket.where(assigned_agent_id: nil).count,
         tickets_by_status: tickets_by_status,
         average_resolution_time_hours: average_resolution_time(closed_tickets_with_times),
-        tickets_created_today: Ticket.where("created_at >= ?", today).count,
+        tickets_created_today: Ticket.where(created_at: today..).count,
         tickets_closed_today: tickets_closed_since(today),
-        tickets_created_this_week: Ticket.where("created_at >= ?", week_start).count,
-        tickets_closed_this_week: tickets_closed_since(week_start)
+        tickets_created_this_week: Ticket.where(created_at: week_start..).count,
+        tickets_closed_this_week: tickets_closed_since(week_start),
       }
     end
 
     private
 
-    def authorize(record, action)
-      unless context[:current_agent]&.admin?
-        raise GraphQL::ExecutionError, "Not authorized"
-      end
+    def authorize(_record, _action)
+      return if context[:current_agent]&.admin?
+
+      raise GraphQL::ExecutionError, "Not authorized"
     end
 
     def tickets_by_status
@@ -46,7 +46,7 @@ module Resolvers
       Audited::Audit
         .where(auditable_type: "Ticket")
         .where("audited_changes -> 'status' ->> 1 = ?", "closed")
-        .where("created_at >= ?", time)
+        .where(created_at: time..)
         .count
     end
 
@@ -64,7 +64,7 @@ module Resolvers
 
         {
           created_at: ticket.created_at,
-          closed_at: closed_audit.created_at
+          closed_at: closed_audit.created_at,
         }
       end
     end

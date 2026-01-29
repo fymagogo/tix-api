@@ -4,14 +4,14 @@ module Mutations
   class TransitionTicket < BaseMutation
     description "Transition a ticket to a new status"
 
-    argument :ticket_id, ID, required: true
     argument :event, String, required: true,
-             description: "AASM event: 'assign_agent', 'start_progress', 'put_on_hold', 'resume', 'close'"
+                             description: "AASM event: 'assign_agent', 'start_progress', 'put_on_hold', 'resume', 'close'"
+    argument :ticket_id, ID, required: true
 
-    field :ticket, Types::TicketType, null: true
     field :errors, [Types::ErrorType], null: false
+    field :ticket, Types::TicketType, null: true
 
-    ALLOWED_EVENTS = %w[assign_agent start_progress put_on_hold resume close].freeze
+    ALLOWED_EVENTS = ["assign_agent", "start_progress", "put_on_hold", "resume", "close"].freeze
 
     def resolve(ticket_id:, event:)
       authenticate!
@@ -27,7 +27,8 @@ module Mutations
         ticket.send("#{event}!")
         { ticket: ticket, errors: [] }
       else
-        { ticket: nil, errors: [{ field: "status", message: "Cannot #{event} from current status", code: "INVALID_TRANSITION" }] }
+        { ticket: nil,
+          errors: [{ field: "status", message: "Cannot #{event} from current status", code: "INVALID_TRANSITION" }], }
       end
     rescue ActiveRecord::RecordNotFound
       { ticket: nil, errors: [{ field: "ticket_id", message: "Ticket not found", code: "NOT_FOUND" }] }

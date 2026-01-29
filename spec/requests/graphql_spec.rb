@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "GraphQL Mutations", type: :request do
+RSpec.describe "GraphQL Mutations" do
   describe "signUp" do
     let(:query) do
       <<~GQL
@@ -28,16 +28,16 @@ RSpec.describe "GraphQL Mutations", type: :request do
           email: "newcustomer@example.com",
           name: "New Customer",
           password: "password123",
-          passwordConfirmation: "password123"
+          passwordConfirmation: "password123",
         }
       end
 
       it "creates a customer and returns token" do
-        expect {
+        expect do
           post "/graphql", params: { query: query, variables: variables }
-        }.to change(Customer, :count).by(1)
+        end.to change(Customer, :count).by(1)
 
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json.dig("data", "signUp", "customer", "email")).to eq("newcustomer@example.com")
         expect(json.dig("data", "signUp", "token")).to be_present
         expect(json.dig("data", "signUp", "errors")).to be_empty
@@ -50,14 +50,14 @@ RSpec.describe "GraphQL Mutations", type: :request do
           email: "test@example.com",
           name: "Test",
           password: "password123",
-          passwordConfirmation: "different"
+          passwordConfirmation: "different",
         }
       end
 
       it "returns validation errors" do
         post "/graphql", params: { query: query, variables: variables }
 
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json.dig("data", "signUp", "customer")).to be_nil
         expect(json.dig("data", "signUp", "errors")).not_to be_empty
       end
@@ -88,7 +88,7 @@ RSpec.describe "GraphQL Mutations", type: :request do
     let(:variables) do
       {
         subject: "Help needed",
-        description: "I need help with my account"
+        description: "I need help with my account",
       }
     end
 

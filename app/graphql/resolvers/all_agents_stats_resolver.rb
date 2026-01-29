@@ -6,9 +6,7 @@ module Resolvers
     description "Get statistics for all agents (admin only)"
 
     def resolve
-      unless context[:current_agent]&.admin?
-        raise GraphQL::ExecutionError, "Not authorized"
-      end
+      raise GraphQL::ExecutionError, "Not authorized" unless context[:current_agent]&.admin?
 
       week_start = Time.current.beginning_of_week
       month_start = Time.current.beginning_of_month
@@ -23,7 +21,7 @@ module Resolvers
           closed_tickets: assigned_tickets.closed.count,
           closed_this_week: tickets_closed_by_agent_since(agent, week_start),
           closed_this_month: tickets_closed_by_agent_since(agent, month_start),
-          average_resolution_time_hours: average_resolution_time(agent)
+          average_resolution_time_hours: average_resolution_time(agent),
         }
       end
     end
@@ -35,7 +33,7 @@ module Resolvers
         .where(auditable_type: "Ticket")
         .where(user_type: "Agent", user_id: agent.id)
         .where("audited_changes -> 'status' ->> 1 = ?", "closed")
-        .where("created_at >= ?", time)
+        .where(created_at: time..)
         .count
     end
 

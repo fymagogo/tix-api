@@ -8,7 +8,7 @@ class ReminderMailer < ApplicationMailer
 
     mail(
       to: agent.email,
-      subject: "Daily Reminder: You have #{@ticket_count} open #{'ticket'.pluralize(@ticket_count)}"
+      subject: "Daily Reminder: You have #{@ticket_count} open #{'ticket'.pluralize(@ticket_count)}",
     )
   end
 end

@@ -13,7 +13,7 @@ module Types
       def prepare
         {
           page: [page, 1].max,
-          per_page: [[per_page, 1].max, MAX_PER_PAGE].min
+          per_page: [[per_page, 1].max, MAX_PER_PAGE].min,
         }
       end
     end

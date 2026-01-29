@@ -6,8 +6,8 @@ module Mutations
 
     argument :filter, Types::Inputs::TicketFilterInputType, required: false
 
-    field :csv, String, null: true, description: "CSV data (only for small exports)"
     field :async, Boolean, null: false, description: "True if export will be emailed"
+    field :csv, String, null: true, description: "CSV data (only for small exports)"
     field :errors, [Types::ErrorType], null: false
 
     def resolve(filter: nil)
@@ -40,8 +40,8 @@ module Mutations
         search_term = ActiveRecord::Base.sanitize_sql_like(search_term)
         scope = scope.where("subject ILIKE ?", "%#{search_term}%")
       end
-      scope = scope.where("created_at >= ?", filter[:created_after]) if filter[:created_after].present?
-      scope = scope.where("created_at <= ?", filter[:created_before]) if filter[:created_before].present?
+      scope = scope.where(created_at: (filter[:created_after])..) if filter[:created_after].present?
+      scope = scope.where(created_at: ..(filter[:created_before])) if filter[:created_before].present?
       scope
     end
   end

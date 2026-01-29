@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Ticket, type: :model do
+RSpec.describe Ticket do
   describe "validations" do
     subject { build(:ticket) }
 
@@ -87,12 +87,12 @@ RSpec.describe Ticket, type: :model do
     it "returns status changes from audit log" do
       ticket.assign_agent!
       ticket.start_progress!
-      
+
       changes = ticket.status_changes
       expect(changes.length).to be >= 2
       # After create (new), assign_agent! transitions to agent_assigned,
       # then start_progress! transitions to in_progress
-      expect(changes.map { |c| c[:to] }).to include("agent_assigned", "in_progress")
+      expect(changes.pluck(:to)).to include("agent_assigned", "in_progress")
     end
   end
 

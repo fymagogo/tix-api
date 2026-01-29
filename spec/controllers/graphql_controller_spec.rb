@@ -16,7 +16,7 @@ RSpec.describe GraphQLController, type: :request do
     it "executes valid GraphQL query" do
       post "/graphql", params: { query: query }
       expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body)).to have_key("data")
+      expect(response.parsed_body).to have_key("data")
     end
 
     it "handles string variables" do
@@ -51,9 +51,9 @@ RSpec.describe GraphQLController, type: :request do
     end
 
     it "raises for unexpected parameter types" do
-      expect {
-        controller.send(:prepare_variables, 12345)
-      }.to raise_error(ArgumentError, /Unexpected parameter/)
+      expect do
+        controller.send(:prepare_variables, 12_345)
+      end.to raise_error(ArgumentError, /Unexpected parameter/)
     end
   end
 end

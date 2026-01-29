@@ -4,12 +4,12 @@ module Mutations
   class CreateTicket < BaseMutation
     description "Create a new support ticket (customers only)"
 
-    argument :subject, String, required: true
-    argument :description, String, required: true
     argument :attachment_ids, [String], required: false, description: "Signed blob IDs from direct upload"
+    argument :description, String, required: true
+    argument :subject, String, required: true
 
-    field :ticket, Types::TicketType, null: true
     field :errors, [Types::ErrorType], null: false
+    field :ticket, Types::TicketType, null: true
 
     def resolve(subject:, description:, attachment_ids: [])
       require_customer!

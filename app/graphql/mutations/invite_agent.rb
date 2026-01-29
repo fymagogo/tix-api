@@ -5,8 +5,8 @@ module Mutations
     description "Invite a new agent (admin only)"
 
     argument :email, String, required: true
-    argument :name, String, required: true
     argument :is_admin, Boolean, required: false, default_value: false
+    argument :name, String, required: true
 
     field :agent, Types::AgentType, null: true
     field :errors, [Types::ErrorType], null: false
@@ -16,7 +16,7 @@ module Mutations
 
       agent = Agent.invite!(
         { email: email, name: name, is_admin: is_admin },
-        current_user
+        current_user,
       )
 
       if agent.persisted? && agent.errors.empty?

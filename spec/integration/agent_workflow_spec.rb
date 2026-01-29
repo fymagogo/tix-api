@@ -22,7 +22,7 @@ RSpec.describe "Agent Workflow Integration", type: :graphql do
 
       result = execute_graphql(
         query: tickets_query,
-        context: { current_user: agent }
+        context: { current_user: agent },
       )
 
       items = result.dig("data", "tickets", "items")
@@ -42,7 +42,7 @@ RSpec.describe "Agent Workflow Integration", type: :graphql do
       result = execute_graphql(
         query: assign_query,
         variables: { ticketId: ticket_to_claim.id, agentId: agent.id },
-        context: { current_user: admin }
+        context: { current_user: admin },
       )
 
       expect(result.dig("data", "assignTicket", "ticket", "assignedAgent", "id")).to eq(agent.id)
@@ -60,7 +60,7 @@ RSpec.describe "Agent Workflow Integration", type: :graphql do
       result = execute_graphql(
         query: my_tickets_query,
         variables: { filter: { assignedToMe: true } },
-        context: { current_user: agent }
+        context: { current_user: agent },
       )
 
       my_tickets = result.dig("data", "tickets", "items")
@@ -88,10 +88,10 @@ RSpec.describe "Agent Workflow Integration", type: :graphql do
       result = execute_graphql(
         query: search_query,
         variables: { filter: { search: "login" } },
-        context: { current_user: agent }
+        context: { current_user: agent },
       )
 
-      subjects = result.dig("data", "tickets", "items").map { |t| t["subject"] }
+      subjects = result.dig("data", "tickets", "items").pluck("subject")
       expect(subjects).to contain_exactly("Login problem")
     end
 
@@ -111,7 +111,7 @@ RSpec.describe "Agent Workflow Integration", type: :graphql do
       result = execute_graphql(
         query: status_query,
         variables: { filter: { status: "IN_PROGRESS" } },
-        context: { current_user: agent, current_agent: agent }
+        context: { current_user: agent, current_agent: agent },
       )
 
       tickets = result.dig("data", "tickets", "items")
@@ -131,7 +131,7 @@ RSpec.describe "Agent Workflow Integration", type: :graphql do
       result = execute_graphql(
         query: combined_query,
         variables: { filter: { assignedToMe: true, status: "AGENT_ASSIGNED" } },
-        context: { current_user: agent, current_agent: agent }
+        context: { current_user: agent, current_agent: agent },
       )
 
       tickets = result.dig("data", "tickets", "items")
@@ -142,11 +142,7 @@ RSpec.describe "Agent Workflow Integration", type: :graphql do
 
   describe "bulk ticket operations" do
     let!(:tickets) do
-      [
-        create(:ticket, :in_progress, customer: customer, assigned_agent: agent),
-        create(:ticket, :in_progress, customer: customer, assigned_agent: agent),
-        create(:ticket, :in_progress, customer: customer, assigned_agent: agent)
-      ]
+      3.times.map { create(:ticket, :in_progress, customer: customer, assigned_agent: agent) }
     end
 
     it "allows agent to close multiple tickets in sequence" do
@@ -163,7 +159,7 @@ RSpec.describe "Agent Workflow Integration", type: :graphql do
         result = execute_graphql(
           query: transition_query,
           variables: { ticketId: ticket.id, event: "close" },
-          context: { current_user: agent }
+          context: { current_user: agent },
         )
 
         expect(result.dig("data", "transitionTicket", "ticket", "status")).to eq("closed")
@@ -191,7 +187,7 @@ RSpec.describe "Agent Workflow Integration", type: :graphql do
 
       result = execute_graphql(
         query: export_query,
-        context: { current_user: agent, current_agent: agent }
+        context: { current_user: agent, current_agent: agent },
       )
 
       export_result = result.dig("data", "exportClosedTickets")
@@ -237,7 +233,7 @@ RSpec.describe "Agent Workflow Integration", type: :graphql do
       result = execute_graphql(
         query: detail_query,
         variables: { id: ticket.id },
-        context: { current_user: agent, current_agent: agent }
+        context: { current_user: agent, current_agent: agent },
       )
 
       ticket_data = result.dig("data", "ticket")
@@ -263,7 +259,7 @@ RSpec.describe "Agent Workflow Integration", type: :graphql do
       result = execute_graphql(
         query: by_number_query,
         variables: { ticketNumber: ticket.ticket_number },
-        context: { current_user: agent }
+        context: { current_user: agent },
       )
 
       expect(result.dig("data", "ticketByNumber", "id")).to eq(ticket.id)

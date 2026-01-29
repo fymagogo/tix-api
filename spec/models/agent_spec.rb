@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Agent, type: :model do
+RSpec.describe Agent do
   describe "validations" do
     subject { build(:agent) }
 
@@ -17,7 +17,7 @@ RSpec.describe Agent, type: :model do
   describe ".next_for_assignment" do
     context "with no agents" do
       it "returns nil" do
-        expect(Agent.next_for_assignment).to be_nil
+        expect(described_class.next_for_assignment).to be_nil
       end
     end
 
@@ -29,13 +29,13 @@ RSpec.describe Agent, type: :model do
       it "returns the agent with the oldest assignment (round-robin)" do
         # NULL last_assigned_at is treated as very old (never assigned), but PostgreSQL
         # sorts NULL as the greatest value by default, so agent1 is returned first
-        expect(Agent.next_for_assignment).to eq(agent1)
+        expect(described_class.next_for_assignment).to eq(agent1)
       end
 
       it "updates last_assigned_at after assignment" do
-        agent = Agent.next_for_assignment
+        agent = described_class.next_for_assignment
         agent.update!(last_assigned_at: Time.current)
-        expect(Agent.next_for_assignment).to eq(agent2)
+        expect(described_class.next_for_assignment).to eq(agent2)
       end
     end
 
@@ -44,7 +44,7 @@ RSpec.describe Agent, type: :model do
       let!(:pending_agent) { create(:agent, invitation_accepted_at: nil) }
 
       it "only considers active agents" do
-        expect(Agent.next_for_assignment).to eq(active_agent)
+        expect(described_class.next_for_assignment).to eq(active_agent)
       end
     end
   end

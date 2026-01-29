@@ -4,9 +4,9 @@ module Mutations
   class AddComment < BaseMutation
     description "Add a comment to a ticket"
 
-    argument :ticket_id, ID, required: true
-    argument :body, String, required: true
     argument :attachment_ids, [String], required: false, description: "Signed blob IDs from direct upload"
+    argument :body, String, required: true
+    argument :ticket_id, ID, required: true
 
     field :comment, Types::CommentType, null: true
     field :errors, [Types::ErrorType], null: false

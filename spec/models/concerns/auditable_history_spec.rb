@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe AuditableHistory, type: :model do
+RSpec.describe AuditableHistory do
   describe "included in Ticket" do
     let(:agent) { create(:agent, name: "Test Agent") }
     let(:customer) { create(:customer) }
@@ -92,7 +92,7 @@ RSpec.describe AuditableHistory, type: :model do
 
         changes = ticket.status_changes
         expect(changes).to be_an(Array)
-        expect(changes.map { |c| c[:to] }).to include("agent_assigned", "in_progress")
+        expect(changes.pluck(:to)).to include("agent_assigned", "in_progress")
       end
     end
   end
@@ -113,9 +113,9 @@ RSpec.describe AuditableHistory, type: :model do
         Agent.accept_invitation!(
           invitation_token: invited_agent.raw_invitation_token,
           password: "password123",
-          password_confirmation: "password123"
+          password_confirmation: "password123",
         )
-        
+
         history = invited_agent.reload.human_readable_history
         events = history.map(&:event)
         expect(events).to include("Invitation accepted")

@@ -31,7 +31,7 @@ RSpec.describe "Statistics and Dashboard Integration", type: :graphql do
 
       result = execute_graphql(
         query: stats_query,
-        context: { current_user: admin, current_agent: admin }
+        context: { current_user: admin, current_agent: admin },
       )
 
       stats = result.dig("data", "dashboardStats")
@@ -57,7 +57,7 @@ RSpec.describe "Statistics and Dashboard Integration", type: :graphql do
 
       result = execute_graphql(
         query: stats_query,
-        context: { current_user: agent, current_agent: agent }
+        context: { current_user: agent, current_agent: agent },
       )
 
       expect(result["errors"].first["message"]).to eq("Not authorized")
@@ -74,7 +74,7 @@ RSpec.describe "Statistics and Dashboard Integration", type: :graphql do
 
       result = execute_graphql(
         query: stats_query,
-        context: { current_user: customer }
+        context: { current_user: customer },
       )
 
       expect(result["errors"].first["message"]).to eq("Not authorized")
@@ -105,7 +105,7 @@ RSpec.describe "Statistics and Dashboard Integration", type: :graphql do
 
       result = execute_graphql(
         query: agent_stats_query,
-        context: { current_user: agent, current_agent: agent }
+        context: { current_user: agent, current_agent: agent },
       )
 
       stats = result.dig("data", "agentStats")
@@ -128,7 +128,7 @@ RSpec.describe "Statistics and Dashboard Integration", type: :graphql do
       result = execute_graphql(
         query: agent_stats_query,
         variables: { agentId: other_agent.id },
-        context: { current_user: admin, current_agent: admin }
+        context: { current_user: admin, current_agent: admin },
       )
 
       stats = result.dig("data", "agentStats")
@@ -148,7 +148,7 @@ RSpec.describe "Statistics and Dashboard Integration", type: :graphql do
       result = execute_graphql(
         query: agent_stats_query,
         variables: { agentId: other_agent.id },
-        context: { current_user: agent, current_agent: agent }
+        context: { current_user: agent, current_agent: agent },
       )
 
       expect(result["errors"].first["message"]).to include("Not authorized")
@@ -175,7 +175,7 @@ RSpec.describe "Statistics and Dashboard Integration", type: :graphql do
 
       result = execute_graphql(
         query: all_stats_query,
-        context: { current_user: admin, current_agent: admin }
+        context: { current_user: admin, current_agent: admin },
       )
 
       all_stats = result.dig("data", "allAgentsStats")
@@ -201,7 +201,7 @@ RSpec.describe "Statistics and Dashboard Integration", type: :graphql do
 
       result = execute_graphql(
         query: all_stats_query,
-        context: { current_user: agent, current_agent: agent }
+        context: { current_user: agent, current_agent: agent },
       )
 
       expect(result["errors"].first["message"]).to eq("Not authorized")
@@ -240,7 +240,7 @@ RSpec.describe "Statistics and Dashboard Integration", type: :graphql do
       execute_graphql(
         query: transition_query,
         variables: { ticketId: ticket.id, event: "close" },
-        context: { current_user: agent }
+        context: { current_user: agent },
       )
 
       # Check updated stats
@@ -274,7 +274,7 @@ RSpec.describe "Statistics and Dashboard Integration", type: :graphql do
       result = execute_graphql(
         query: paginated_query,
         variables: { pagination: { page: 1, perPage: 10 } },
-        context: { current_user: agent }
+        context: { current_user: agent },
       )
 
       first_page = result.dig("data", "tickets")
@@ -286,7 +286,7 @@ RSpec.describe "Statistics and Dashboard Integration", type: :graphql do
       result = execute_graphql(
         query: paginated_query,
         variables: { pagination: { page: 2, perPage: 10 } },
-        context: { current_user: agent }
+        context: { current_user: agent },
       )
 
       second_page = result.dig("data", "tickets")
@@ -297,7 +297,7 @@ RSpec.describe "Statistics and Dashboard Integration", type: :graphql do
       result = execute_graphql(
         query: paginated_query,
         variables: { pagination: { page: 3, perPage: 10 } },
-        context: { current_user: agent }
+        context: { current_user: agent },
       )
 
       third_page = result.dig("data", "tickets")

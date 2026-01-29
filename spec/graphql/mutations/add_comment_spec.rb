@@ -44,6 +44,7 @@ RSpec.describe Mutations::AddComment, type: :graphql do
   describe "customer adding comment" do
     context "after agent has commented" do
       before { create(:comment, ticket: ticket, author: agent, body: "Agent first") }
+
       let(:variables) { { ticketId: ticket.id, body: "Customer reply" } }
 
       it "allows customer to comment" do

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe TicketExportJob, type: :job do
+RSpec.describe TicketExportJob do
   include ActiveJob::TestHelper
 
   let(:agent) { create(:agent) }
@@ -9,7 +9,7 @@ RSpec.describe TicketExportJob, type: :job do
     let!(:closed_ticket) do
       create(:ticket, :closed,
              updated_at: 2.weeks.ago,
-             subject: "Closed ticket")
+             subject: "Closed ticket",)
     end
 
     it "generates CSV for closed tickets" do

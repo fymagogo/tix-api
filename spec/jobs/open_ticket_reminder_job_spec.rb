@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe OpenTicketReminderJob, type: :job do
+RSpec.describe OpenTicketReminderJob do
   describe "#perform" do
     let!(:agent_with_tickets) { create(:agent, name: "Agent With Tickets") }
     let!(:agent_without_tickets) { create(:agent, name: "Agent Without Tickets") }

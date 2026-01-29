@@ -17,7 +17,7 @@ class ReminderMailerPreview < ActionMailer::Preview
           status: :open,
           priority: :high,
           created_at: 2.days.ago,
-          customer: customer
+          customer: customer,
         ),
         Ticket.new(
           id: 2,
@@ -26,8 +26,8 @@ class ReminderMailerPreview < ActionMailer::Preview
           status: :in_progress,
           priority: :medium,
           created_at: 1.day.ago,
-          customer: customer
-        )
+          customer: customer,
+        ),
       ]
     end
 

@@ -7,8 +7,8 @@ module Mutations
     argument :email, String, required: true
     argument :user_type, String, required: false, default_value: "customer"
 
-    field :success, Boolean, null: false
     field :errors, [Types::ErrorType], null: false
+    field :success, Boolean, null: false
 
     def resolve(email:, user_type:)
       klass = user_type == "agent" ? Agent : Customer

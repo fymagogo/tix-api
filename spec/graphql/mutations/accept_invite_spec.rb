@@ -27,7 +27,7 @@ RSpec.describe Mutations::AcceptInvite, type: :graphql do
       {
         invitationToken: invited_agent.raw_invitation_token,
         password: "newpassword123",
-        passwordConfirmation: "newpassword123"
+        passwordConfirmation: "newpassword123",
       }
     end
 
@@ -51,7 +51,7 @@ RSpec.describe Mutations::AcceptInvite, type: :graphql do
       {
         invitationToken: invited_agent.raw_invitation_token,
         password: "newpassword123",
-        passwordConfirmation: "different"
+        passwordConfirmation: "different",
       }
     end
 
@@ -69,7 +69,7 @@ RSpec.describe Mutations::AcceptInvite, type: :graphql do
       {
         invitationToken: "invalid-token",
         password: "newpassword123",
-        passwordConfirmation: "newpassword123"
+        passwordConfirmation: "newpassword123",
       }
     end
 

@@ -5,12 +5,12 @@ class ExportMailer < ApplicationMailer
     @agent = agent
     attachments["closed_tickets_#{Date.current.iso8601}.csv"] = {
       mime_type: "text/csv",
-      content: csv_data
+      content: csv_data,
     }
 
     mail(
       to: agent.email,
-      subject: "Your closed tickets export is ready"
+      subject: "Your closed tickets export is ready",
     )
   end
 end

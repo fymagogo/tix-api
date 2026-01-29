@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Devise.setup do |config|
   config.mailer_sender = ENV.fetch("MAILER_FROM", "support@tix.example.com")
   config.mailer = "CustomDeviseMailer"
@@ -22,16 +24,16 @@ Devise.setup do |config|
     jwt.secret = if Rails.env.production?
                    ENV.fetch("DEVISE_JWT_SECRET_KEY") # Fails loudly if not set in production
                  else
-                   ENV.fetch("DEVISE_JWT_SECRET_KEY") { "dev-secret-key-not-for-production" }
+                   ENV.fetch("DEVISE_JWT_SECRET_KEY", "dev-secret-key-not-for-production")
                  end
     jwt.expiration_time = 24.hours.to_i
     jwt.dispatch_requests = [
       ["POST", %r{^/customers/sign_in$}],
-      ["POST", %r{^/agents/sign_in$}]
+      ["POST", %r{^/agents/sign_in$}],
     ]
     jwt.revocation_requests = [
       ["DELETE", %r{^/customers/sign_out$}],
-      ["DELETE", %r{^/agents/sign_out$}]
+      ["DELETE", %r{^/agents/sign_out$}],
     ]
   end
 

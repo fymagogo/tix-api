@@ -6,7 +6,7 @@ module GraphqlHelpers
       query,
       variables: variables.deep_stringify_keys,
       context: context,
-      operation_name: nil
+      operation_name: nil,
     )
     @graphql_response = result.to_h
     result.to_h

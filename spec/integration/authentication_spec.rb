@@ -20,8 +20,8 @@ RSpec.describe "Authentication Integration", type: :graphql do
           email: "newuser@example.com",
           name: "New User",
           password: "password123",
-          passwordConfirmation: "password123"
-        }
+          passwordConfirmation: "password123",
+        },
       )
 
       expect(result.dig("data", "signUp", "customer", "email")).to eq("newuser@example.com")
@@ -44,14 +44,15 @@ RSpec.describe "Authentication Integration", type: :graphql do
       result = execute_graphql(
         query: create_ticket_query,
         variables: { subject: "Test ticket", description: "Test description" },
-        context: { current_user: customer }
+        context: { current_user: customer },
       )
 
       expect(result.dig("data", "createTicket", "ticket", "subject")).to eq("Test ticket")
     end
 
     it "allows existing customer to sign in" do
-      customer = create(:customer, email: "existing@example.com", password: "password123", password_confirmation: "password123")
+      create(:customer, email: "existing@example.com", password: "password123",
+                        password_confirmation: "password123",)
 
       signin_query = <<~GQL
         mutation SignIn($email: String!, $password: String!, $userType: String) {
@@ -65,7 +66,7 @@ RSpec.describe "Authentication Integration", type: :graphql do
 
       result = execute_graphql(
         query: signin_query,
-        variables: { email: "existing@example.com", password: "password123", userType: "customer" }
+        variables: { email: "existing@example.com", password: "password123", userType: "customer" },
       )
 
       expect(result.dig("data", "signIn", "user", "email")).to eq("existing@example.com")
@@ -73,7 +74,8 @@ RSpec.describe "Authentication Integration", type: :graphql do
     end
 
     it "rejects invalid credentials" do
-      create(:customer, email: "user@example.com", password: "correctpassword", password_confirmation: "correctpassword")
+      create(:customer, email: "user@example.com", password: "correctpassword",
+                        password_confirmation: "correctpassword",)
 
       signin_query = <<~GQL
         mutation SignIn($email: String!, $password: String!, $userType: String) {
@@ -87,7 +89,7 @@ RSpec.describe "Authentication Integration", type: :graphql do
 
       result = execute_graphql(
         query: signin_query,
-        variables: { email: "user@example.com", password: "wrongpassword", userType: "customer" }
+        variables: { email: "user@example.com", password: "wrongpassword", userType: "customer" },
       )
 
       expect(result.dig("data", "signIn", "user")).to be_nil
@@ -112,7 +114,7 @@ RSpec.describe "Authentication Integration", type: :graphql do
       result = execute_graphql(
         query: invite_query,
         variables: { email: "newagent@company.com", name: "New Agent", isAdmin: false },
-        context: { current_user: admin, current_agent: admin }
+        context: { current_user: admin, current_agent: admin },
       )
 
       agent_data = result.dig("data", "inviteAgent", "agent")
@@ -142,7 +144,7 @@ RSpec.describe "Authentication Integration", type: :graphql do
 
       result = execute_graphql(
         query: request_reset_query,
-        variables: { email: "reset@example.com" }
+        variables: { email: "reset@example.com" },
       )
 
       expect(result.dig("data", "requestPasswordReset", "success")).to be true
@@ -166,7 +168,7 @@ RSpec.describe "Authentication Integration", type: :graphql do
       result = execute_graphql(
         query: ticket_query,
         variables: { id: ticket.id },
-        context: { current_user: customer }
+        context: { current_user: customer },
       )
 
       expect(result["errors"].first["message"]).to eq("Not authorized")
@@ -187,7 +189,7 @@ RSpec.describe "Authentication Integration", type: :graphql do
       result = execute_graphql(
         query: transition_query,
         variables: { ticketId: ticket.id, event: "close" },
-        context: { current_user: customer }
+        context: { current_user: customer },
       )
 
       expect(result["errors"].first["message"]).to eq("Not authorized")
@@ -206,7 +208,7 @@ RSpec.describe "Authentication Integration", type: :graphql do
       result = execute_graphql(
         query: invite_query,
         variables: { email: "test@company.com", name: "Test Agent" },
-        context: { current_user: agent, current_agent: agent }
+        context: { current_user: agent, current_agent: agent },
       )
 
       # Error returned as mutation error, not GraphQL error

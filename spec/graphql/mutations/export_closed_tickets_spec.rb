@@ -38,14 +38,14 @@ RSpec.describe Mutations::ExportClosedTickets, type: :graphql do
       end
 
       it "returns async true and queues job" do
-        expect {
+        expect do
           result = execute_graphql(query: query, context: { current_user: agent })
 
           data = result["data"]["exportClosedTickets"]
           expect(data["csv"]).to be_nil
           expect(data["async"]).to be true
           expect(data["errors"]).to be_empty
-        }.to have_enqueued_job(TicketExportJob)
+        end.to have_enqueued_job(TicketExportJob)
       end
     end
 
@@ -58,7 +58,7 @@ RSpec.describe Mutations::ExportClosedTickets, type: :graphql do
         result = execute_graphql(
           query: query,
           variables: { filter: { assignedToMe: true } },
-          context: { current_user: agent }
+          context: { current_user: agent },
         )
 
         data = result["data"]["exportClosedTickets"]
@@ -73,7 +73,7 @@ RSpec.describe Mutations::ExportClosedTickets, type: :graphql do
         result = execute_graphql(
           query: query,
           variables: { filter: { customerId: customer.id } },
-          context: { current_user: agent }
+          context: { current_user: agent },
         )
 
         data = result["data"]["exportClosedTickets"]
@@ -85,7 +85,7 @@ RSpec.describe Mutations::ExportClosedTickets, type: :graphql do
         result = execute_graphql(
           query: query,
           variables: { filter: { search: own_ticket.subject } },
-          context: { current_user: agent }
+          context: { current_user: agent },
         )
 
         data = result["data"]["exportClosedTickets"]
@@ -96,7 +96,7 @@ RSpec.describe Mutations::ExportClosedTickets, type: :graphql do
         result = execute_graphql(
           query: query,
           variables: { filter: { createdAfter: 1.day.ago.iso8601, createdBefore: 1.day.from_now.iso8601 } },
-          context: { current_user: agent }
+          context: { current_user: agent },
         )
 
         data = result["data"]["exportClosedTickets"]

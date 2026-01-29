@@ -25,13 +25,12 @@ class SecurityHeaders
     headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'"
 
     # Permissions policy
-    headers["Permissions-Policy"] = "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
+    headers["Permissions-Policy"] =
+      "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
 
     [status, headers, response]
   end
 end
 
 # Only add in production
-if Rails.env.production?
-  Rails.application.config.middleware.insert_after ActionDispatch::Static, SecurityHeaders
-end
+Rails.application.config.middleware.insert_after ActionDispatch::Static, SecurityHeaders if Rails.env.production?

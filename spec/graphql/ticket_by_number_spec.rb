@@ -20,7 +20,7 @@ RSpec.describe "ticketByNumber", type: :graphql do
     @graphql_response = execute_graphql(
       query: query,
       variables: { ticketNumber: ticket.ticket_number },
-      context: { current_user: customer }
+      context: { current_user: customer },
     ).to_h
 
     expect(graphql_errors).to be_nil
@@ -36,7 +36,7 @@ RSpec.describe "ticketByNumber", type: :graphql do
     @graphql_response = execute_graphql(
       query: query,
       variables: { ticketNumber: ticket.ticket_number },
-      context: { current_user: other }
+      context: { current_user: other },
     ).to_h
 
     expect(graphql_errors).to be_nil

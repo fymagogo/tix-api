@@ -98,7 +98,9 @@ RSpec.describe Resolvers::TicketsResolver, type: :graphql do
 
   describe "filtering" do
     let!(:new_ticket) { create(:ticket, customer: customer, status: "new", subject: "New ticket") }
-    let!(:in_progress_ticket) { create(:ticket, :in_progress, customer: customer, assigned_agent: agent, subject: "In progress") }
+    let!(:in_progress_ticket) do
+      create(:ticket, :in_progress, customer: customer, assigned_agent: agent, subject: "In progress")
+    end
     let!(:closed_ticket) { create(:ticket, :closed, customer: customer, assigned_agent: agent, subject: "Closed") }
 
     context "by status" do

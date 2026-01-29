@@ -3,7 +3,7 @@
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 
-puts "Seeding database..."
+Rails.logger.debug "Seeding database..."
 
 # Create admin agent
 admin = Agent.find_or_create_by!(email: "admin@tix.test") do |a|
@@ -13,7 +13,7 @@ admin = Agent.find_or_create_by!(email: "admin@tix.test") do |a|
   a.is_admin = true
   a.invitation_accepted_at = Time.current
 end
-puts "Created admin agent: #{admin.email}"
+Rails.logger.debug { "Created admin agent: #{admin.email}" }
 
 # Create regular agents
 agents = []
@@ -27,7 +27,7 @@ agents = []
     a.invited_by = admin
   end
   agents << agent
-  puts "Created agent: #{agent.email}"
+  Rails.logger.debug { "Created agent: #{agent.email}" }
 end
 
 # Create customers
@@ -39,11 +39,11 @@ customers = []
     c.password_confirmation = "password123"
   end
   customers << customer
-  puts "Created customer: #{customer.email}"
+  Rails.logger.debug { "Created customer: #{customer.email}" }
 end
 
-puts "\n✅ Seed completed!"
-puts "\nTest accounts:"
-puts "  Admin: admin@tix.test / password123"
-puts "  Agents: agent1@tix.test, agent2@tix.test, agent3@tix.test / password123"
-puts "  Customers: customer1@example.com - customer5@example.com / password123"
+Rails.logger.debug "\n✅ Seed completed!"
+Rails.logger.debug "\nTest accounts:"
+Rails.logger.debug "  Admin: admin@tix.test / password123"
+Rails.logger.debug "  Agents: agent1@tix.test, agent2@tix.test, agent3@tix.test / password123"
+Rails.logger.debug "  Customers: customer1@example.com - customer5@example.com / password123"

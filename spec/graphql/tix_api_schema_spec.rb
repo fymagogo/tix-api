@@ -18,7 +18,7 @@ RSpec.describe TixApiSchema, type: :graphql do
         result = execute_graphql(
           query: query,
           variables: { id: "non-existent-uuid" },
-          context: { current_user: agent }
+          context: { current_user: agent },
         )
 
         expect(result["errors"]).to be_present
@@ -45,7 +45,7 @@ RSpec.describe TixApiSchema, type: :graphql do
         result = execute_graphql(
           query: query,
           variables: { id: ticket.id },
-          context: { current_user: customer }
+          context: { current_user: customer },
         )
 
         expect(result["errors"]).to be_present
@@ -87,9 +87,9 @@ RSpec.describe TixApiSchema, type: :graphql do
 
     it "raises for unknown type" do
       unknown = Object.new
-      expect {
+      expect do
         described_class.resolve_type(nil, unknown, nil)
-      }.to raise_error(GraphQL::RequiredImplementationMissingError, /Unknown type/)
+      end.to raise_error(GraphQL::RequiredImplementationMissingError, /Unknown type/)
     end
   end
 end

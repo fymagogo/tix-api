@@ -21,9 +21,9 @@ module Types
     end
 
     # Statistics queries
-    field :dashboard_stats, resolver: Resolvers::DashboardStatsResolver
     field :agent_stats, resolver: Resolvers::AgentStatsResolver
     field :all_agents_stats, resolver: Resolvers::AllAgentsStatsResolver
+    field :dashboard_stats, resolver: Resolvers::DashboardStatsResolver
 
     def me
       context[:current_user]
@@ -41,7 +41,7 @@ module Types
 
       normalized = ticket_number.to_s.upcase
       ticket = Ticket.includes(:customer, :assigned_agent, :comments, attachments_attachments: :blob)
-                     .find_by(ticket_number: normalized)
+        .find_by(ticket_number: normalized)
       return nil unless ticket
 
       policy = Pundit.policy!(user, ticket)

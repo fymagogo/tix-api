@@ -4,20 +4,20 @@ module Mutations
   class ResetPassword < BaseMutation
     description "Reset password using token"
 
-    argument :token, String, required: true
     argument :password, String, required: true
     argument :password_confirmation, String, required: true
+    argument :token, String, required: true
     argument :user_type, String, required: false, default_value: "customer"
 
-    field :success, Boolean, null: false
     field :errors, [Types::ErrorType], null: false
+    field :success, Boolean, null: false
 
     def resolve(token:, password:, password_confirmation:, user_type:)
       klass = user_type == "agent" ? Agent : Customer
       user = klass.reset_password_by_token(
         reset_password_token: token,
         password: password,
-        password_confirmation: password_confirmation
+        password_confirmation: password_confirmation,
       )
 
       if user.errors.empty?

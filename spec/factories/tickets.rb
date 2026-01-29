@@ -2,13 +2,13 @@
 
 FactoryBot.define do
   factory :ticket do
-    association :customer
+    customer
     sequence(:subject) { |n| "Test Ticket #{n}" }
     description { "This is a test ticket description." }
     status { "new" }
 
     trait :with_agent do
-      association :assigned_agent, factory: :agent
+      assigned_agent factory: [:agent]
       status { "agent_assigned" }
     end
 

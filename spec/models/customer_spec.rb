@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Customer, type: :model do
+RSpec.describe Customer do
   describe "validations" do
     subject { build(:customer) }
 

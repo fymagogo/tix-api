@@ -16,13 +16,13 @@ module AuditableHistory
   extend ActiveSupport::Concern
 
   # Fields that should never be exposed in audit history
-  SENSITIVE_FIELDS = %w[
-    encrypted_password
-    reset_password_token
-    invitation_token
-    jti
-    current_sign_in_ip
-    last_sign_in_ip
+  SENSITIVE_FIELDS = [
+    "encrypted_password",
+    "reset_password_token",
+    "invitation_token",
+    "jti",
+    "current_sign_in_ip",
+    "last_sign_in_ip",
   ].freeze
 
   # Human-readable status labels
@@ -31,7 +31,7 @@ module AuditableHistory
     "agent_assigned" => "Agent Assigned",
     "in_progress" => "In Progress",
     "hold" => "On Hold",
-    "closed" => "Closed"
+    "closed" => "Closed",
   }.freeze
 
   included do
@@ -60,7 +60,7 @@ module AuditableHistory
         changes: format_changes(filter_sensitive_fields(audit.audited_changes)),
         changed_at: audit.created_at,
         changed_by: audit.user,
-        version: audit.version
+        version: audit.version,
       )
     end
   end
@@ -81,7 +81,7 @@ module AuditableHistory
           changes: [format_single_change(field_str, changes)],
           changed_at: audit.created_at,
           changed_by: audit.user,
-          version: audit.version
+          version: audit.version,
         )
       end
   end
@@ -110,7 +110,7 @@ module AuditableHistory
         id: "#{audit.id}-create",
         event: "Ticket created",
         occurred_at: audit.created_at,
-        actor: audit.user
+        actor: audit.user,
       )
     end
 
@@ -124,7 +124,7 @@ module AuditableHistory
           id: "#{audit.id}-status",
           event: "Status changed to #{label}",
           occurred_at: audit.created_at,
-          actor: audit.user
+          actor: audit.user,
         )
       end
     end
@@ -144,7 +144,7 @@ module AuditableHistory
             id: "#{audit.id}-agent",
             event: event_text,
             occurred_at: audit.created_at,
-            actor: audit.user
+            actor: audit.user,
           )
         else
           # Initial assignment
@@ -152,7 +152,7 @@ module AuditableHistory
             id: "#{audit.id}-agent",
             event: "Assigned to #{agent_name}",
             occurred_at: audit.created_at,
-            actor: audit.user
+            actor: audit.user,
           )
         end
       elsif old_id.present? && new_id.nil?
@@ -160,7 +160,7 @@ module AuditableHistory
           id: "#{audit.id}-unassign",
           event: "Agent unassigned",
           occurred_at: audit.created_at,
-          actor: audit.user
+          actor: audit.user,
         )
       end
     end
@@ -174,7 +174,7 @@ module AuditableHistory
 
     if audit.action == "create"
       invited_by_id = changes["invited_by_id"]
-      invited_by_id = invited_by_id.is_a?(Array) ? invited_by_id[1] : invited_by_id
+      invited_by_id = invited_by_id[1] if invited_by_id.is_a?(Array)
 
       if invited_by_id.present?
         inviter = Agent.find_by(id: invited_by_id)
@@ -183,14 +183,14 @@ module AuditableHistory
           id: "#{audit.id}-create",
           event: "Invited by #{inviter_name}",
           occurred_at: audit.created_at,
-          actor: inviter
+          actor: inviter,
         )
       else
         events << HistoryEvent.new(
           id: "#{audit.id}-create",
           event: "Account created",
           occurred_at: audit.created_at,
-          actor: audit.user
+          actor: audit.user,
         )
       end
     end
@@ -203,20 +203,20 @@ module AuditableHistory
           id: "#{audit.id}-accepted",
           event: "Invitation accepted",
           occurred_at: audit.created_at,
-          actor: nil
+          actor: nil,
         )
       end
     end
 
     # Password reset
     if changes["reset_password_sent_at"]
-      old_val, new_val = extract_change(changes["reset_password_sent_at"])
+      _, new_val = extract_change(changes["reset_password_sent_at"])
       if new_val.present?
         events << HistoryEvent.new(
           id: "#{audit.id}-reset",
           event: "Password reset requested",
           occurred_at: audit.created_at,
-          actor: nil
+          actor: nil,
         )
       end
     end
@@ -232,7 +232,7 @@ module AuditableHistory
         id: "#{audit.id}-create",
         event: "Account created",
         occurred_at: audit.created_at,
-        actor: nil
+        actor: nil,
       )
     end
 
@@ -251,7 +251,7 @@ module AuditableHistory
       id: "#{audit.id}-#{audit.action}",
       event: event_text,
       occurred_at: audit.created_at,
-      actor: audit.user
+      actor: audit.user,
     )]
   end
 
