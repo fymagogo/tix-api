@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Run RuboCop on staged Ruby files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.rb$' | tr '\n' ' ')
+
+if [ -n "$STAGED_FILES" ]; then
+  echo "Running RuboCop on staged files..."
+  bundle exec rubocop --force-exclusion $STAGED_FILES
+  RUBOCOP_EXIT=$?
+  
+  if [ $RUBOCOP_EXIT -ne 0 ]; then
+    echo ""
+    echo "RuboCop found issues. Run 'bundle exec rubocop -a' to auto-fix."
+    exit 1
+  fi
+fi
+
+# Run Brakeman security scan (optional, can be slow)
+# echo "Running Brakeman security scan..."
+# bundle exec brakeman -q --no-pager
+
+exit 0
