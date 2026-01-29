@@ -32,6 +32,7 @@ class Ticket < ApplicationRecord
 
   # State machine
   aasm column: :status, whiny_transitions: true do
+    after_all_transitions :notify_customer_of_status_change
     state :new, initial: true
     state :agent_assigned
     state :in_progress
@@ -115,6 +116,18 @@ class Ticket < ApplicationRecord
 
   def assign_agent_async
     TicketAssignmentJob.perform_later(id)
+  end
+
+  def notify_customer_of_status_change
+    old_status = aasm.from_state.to_s
+    new_status = aasm.to_state.to_s
+
+    # Use specific mailer for closed status
+    if new_status == "closed"
+      TicketMailer.ticket_closed(self).deliver_later
+    else
+      TicketMailer.status_changed(self, old_status, new_status).deliver_later
+    end
   end
 
   ALLOWED_CONTENT_TYPES = %w[

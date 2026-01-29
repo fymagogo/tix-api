@@ -1,0 +1,15 @@
+Hi <%= @customer.name %>,
+
+The status of your support ticket has been updated:
+
+Ticket: #<%= @ticket.ticket_number %>
+Subject: <%= @ticket.subject %>
+Status: <%= @old_status.humanize %> → <%= @new_status.humanize %>
+<% if @agent %>
+Assigned to: <%= @agent.name %>
+<% end %>
+
+View your ticket: <%= ENV.fetch('CUSTOMER_PORTAL_URL', 'http://localhost:5173') %>/tickets/<%= @ticket.id %>
+
+---
+This is an automated notification from Tix Support System.

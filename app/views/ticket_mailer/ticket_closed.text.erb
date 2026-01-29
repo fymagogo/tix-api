@@ -1,0 +1,17 @@
+Hi <%= @customer.name %>,
+
+Great news! Your support ticket has been resolved.
+
+Ticket: #<%= @ticket.ticket_number %>
+Subject: <%= @ticket.subject %>
+<% if @agent %>
+Resolved by: <%= @agent.name %>
+<% end %>
+
+If you have any further questions, view your ticket:
+<%= ENV.fetch('CUSTOMER_PORTAL_URL', 'http://localhost:5173') %>/tickets/<%= @ticket.id %>
+
+Thank you for using our support system!
+
+---
+This is an automated notification from Tix Support System.
