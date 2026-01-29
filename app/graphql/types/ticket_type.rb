@@ -6,6 +6,9 @@ module Types
 
     field :assigned_agent, Types::AgentType, null: true
     field :attachments, [Types::AttachmentType], null: false, description: "File attachments", complexity: 5
+    field :available_transitions, [Types::AvailableTransitionType],
+          null: false,
+          description: "Available state transitions for this ticket"
     field :can_comment, Boolean, null: false, description: "Whether the current user can add a comment"
     field :closed_at, GraphQL::Types::ISO8601DateTime, null: true
     field :comments, [Types::CommentType], null: false, complexity: 10
@@ -21,10 +24,28 @@ module Types
     field :ticket_number, String, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
 
+    TRANSITION_LABELS = {
+      "assign_agent" => "Assign Agent",
+      "start_progress" => "Start Progress",
+      "put_on_hold" => "Put On Hold",
+      "resume" => "Resume",
+      "close" => "Close Ticket",
+    }.freeze
+
+    def available_transitions
+      Ticket.aasm.events.select { |e| object.send("may_#{e.name}?") }.map do |event|
+        {
+          event: event.name.to_s,
+          label: TRANSITION_LABELS[event.name.to_s] || event.name.to_s.humanize,
+        }
+      end
+    end
+
     def comments
       object.comments.ordered
     end
 
+    # rubocop:disable Naming/PredicateMethod
     def can_comment
       return false if object.closed?
 
@@ -37,5 +58,6 @@ module Types
       # Customers can only comment after an agent has responded
       object.comments.exists?(author_type: "Agent")
     end
+    # rubocop:enable Naming/PredicateMethod
   end
 end
