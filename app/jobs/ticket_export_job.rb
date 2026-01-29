@@ -21,7 +21,11 @@ class TicketExportJob < ApplicationJob
 
     scope = scope.where(assigned_agent_id: filter[:assigned_to_me] ? Agent.find_by(id: filter[:agent_id])&.id : nil) if filter[:assigned_to_me]
     scope = scope.where(customer_id: filter[:customer_id]) if filter[:customer_id].present?
-    scope = scope.where("subject ILIKE ?", "%#{filter[:search]}%") if filter[:search].present?
+    if filter[:search].present?
+      search_term = filter[:search].to_s.strip[0, 100]
+      search_term = ActiveRecord::Base.sanitize_sql_like(search_term)
+      scope = scope.where("subject ILIKE ?", "%#{search_term}%")
+    end
     scope = scope.where("created_at >= ?", filter[:created_after]) if filter[:created_after].present?
     scope = scope.where("created_at <= ?", filter[:created_before]) if filter[:created_before].present?
     scope
