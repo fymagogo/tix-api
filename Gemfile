@@ -41,6 +41,9 @@ gem "rack-cors", "~> 2.0"
 # Rate limiting
 gem "rack-attack", "~> 6.7"
 
+# Structured logging
+gem "lograge", "~> 0.14"
+
 # JSON
 gem "jbuilder", "~> 2.11"
 
