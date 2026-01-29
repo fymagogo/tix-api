@@ -20,6 +20,11 @@ module Types
       argument :id, ID, required: true
     end
 
+    # Statistics queries
+    field :dashboard_stats, resolver: Resolvers::DashboardStatsResolver
+    field :agent_stats, resolver: Resolvers::AgentStatsResolver
+    field :all_agents_stats, resolver: Resolvers::AllAgentsStatsResolver
+
     def me
       context[:current_user]
     end
