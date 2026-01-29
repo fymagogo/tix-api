@@ -19,7 +19,11 @@ Devise.setup do |config|
 
   # JWT Configuration
   config.jwt do |jwt|
-    jwt.secret = ENV.fetch("DEVISE_JWT_SECRET_KEY") { Rails.application.credentials.devise_jwt_secret_key || "dev-secret-key" }
+    jwt.secret = if Rails.env.production?
+                   ENV.fetch("DEVISE_JWT_SECRET_KEY") # Fails loudly if not set in production
+                 else
+                   ENV.fetch("DEVISE_JWT_SECRET_KEY") { "dev-secret-key-not-for-production" }
+                 end
     jwt.expiration_time = 24.hours.to_i
     jwt.dispatch_requests = [
       ["POST", %r{^/customers/sign_in$}],
