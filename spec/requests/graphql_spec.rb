@@ -11,7 +11,6 @@ RSpec.describe "GraphQL Mutations" do
               email
               name
             }
-            token
             errors {
               field
               message
@@ -32,15 +31,18 @@ RSpec.describe "GraphQL Mutations" do
         }
       end
 
-      it "creates a customer and returns token" do
+      it "creates a customer and sets auth cookies" do
         expect do
           post "/graphql", params: { query: query, variables: variables }
         end.to change(Customer, :count).by(1)
 
         json = response.parsed_body
         expect(json.dig("data", "signUp", "customer", "email")).to eq("newcustomer@example.com")
-        expect(json.dig("data", "signUp", "token")).to be_present
         expect(json.dig("data", "signUp", "errors")).to be_empty
+
+        # Verify auth cookies are set
+        expect(response.cookies["access_token"]).to be_present
+        expect(response.cookies["refresh_token"]).to be_present
       end
     end
 

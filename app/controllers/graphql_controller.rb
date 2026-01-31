@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class GraphQLController < ApplicationController
+  include ActionController::Cookies
+
   skip_before_action :verify_authenticity_token, raise: false
 
   def execute
@@ -9,9 +11,11 @@ class GraphQLController < ApplicationController
     operation_name = params[:operationName]
 
     context = {
-      current_user: current_user,
-      current_customer: current_customer,
-      current_agent: current_agent,
+      current_user: current_user_from_cookie,
+      current_customer: current_customer_from_cookie,
+      current_agent: current_agent_from_cookie,
+      request: request,
+      response: response,
     }
 
     result = ::TixApiSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
@@ -23,6 +27,42 @@ class GraphQLController < ApplicationController
   end
 
   private
+
+  ACCESS_TOKEN_COOKIE = :access_token
+
+  def access_token_from_cookie
+    cookies[ACCESS_TOKEN_COOKIE]
+  end
+
+  def decode_jwt(token)
+    return nil if token.blank?
+
+    Warden::JWTAuth::TokenDecoder.new.call(token)
+  rescue JWT::DecodeError, JWT::ExpiredSignature, JWT::VerificationError
+    nil
+  end
+
+  def current_user_from_cookie
+    current_customer_from_cookie || current_agent_from_cookie
+  end
+
+  def current_customer_from_cookie
+    @current_customer_from_cookie ||= begin
+      payload = decode_jwt(access_token_from_cookie)
+      return nil unless payload && payload["sub"] && payload["scp"] == "customer"
+
+      Customer.find_by(id: payload["sub"], jti: payload["jti"])
+    end
+  end
+
+  def current_agent_from_cookie
+    @current_agent_from_cookie ||= begin
+      payload = decode_jwt(access_token_from_cookie)
+      return nil unless payload && payload["sub"] && payload["scp"] == "agent"
+
+      Agent.find_by(id: payload["sub"], jti: payload["jti"])
+    end
+  end
 
   def prepare_variables(variables_param)
     case variables_param

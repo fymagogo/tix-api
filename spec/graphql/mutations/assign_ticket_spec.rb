@@ -46,7 +46,8 @@ RSpec.describe Mutations::AssignTicket, type: :graphql do
     it "returns admin access required error" do
       result = execute_graphql(query: query, variables: variables, context: { current_user: agent })
 
-      expect(result["errors"].first["message"]).to eq("Admin access required")
+      data = result["data"]["assignTicket"]
+      expect(data["errors"].first["message"]).to eq("Admin access required")
     end
   end
 
@@ -56,7 +57,8 @@ RSpec.describe Mutations::AssignTicket, type: :graphql do
     it "returns agent access required error" do
       result = execute_graphql(query: query, variables: variables, context: { current_user: customer })
 
-      expect(result["errors"].first["message"]).to eq("Agent access required")
+      data = result["data"]["assignTicket"]
+      expect(data["errors"].first["message"]).to eq("Agent access required")
     end
   end
 

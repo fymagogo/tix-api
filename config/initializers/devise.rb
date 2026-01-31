@@ -26,7 +26,8 @@ Devise.setup do |config|
                  else
                    ENV.fetch("DEVISE_JWT_SECRET_KEY", "dev-secret-key-not-for-production")
                  end
-    jwt.expiration_time = 24.hours.to_i
+    # Short-lived access token (15 minutes) - refresh token handles session persistence
+    jwt.expiration_time = 15.minutes.to_i
     jwt.dispatch_requests = [
       ["POST", %r{^/customers/sign_in$}],
       ["POST", %r{^/agents/sign_in$}],

@@ -63,7 +63,8 @@ RSpec.describe Mutations::AddComment, type: :graphql do
         result = execute_graphql(query: query, variables: variables, context: { current_user: customer })
 
         # Policy check fails because customer cannot comment before agent
-        expect(result["errors"].first["message"]).to eq("Not authorized")
+        data = result["data"]["addComment"]
+        expect(data["errors"].first["message"]).to eq("Not authorized")
       end
     end
 
@@ -74,7 +75,8 @@ RSpec.describe Mutations::AddComment, type: :graphql do
       it "returns not authorized error" do
         result = execute_graphql(query: query, variables: variables, context: { current_user: other_customer })
 
-        expect(result["errors"].first["message"]).to eq("Not authorized")
+        data = result["data"]["addComment"]
+        expect(data["errors"].first["message"]).to eq("Not authorized")
       end
     end
   end
@@ -85,7 +87,8 @@ RSpec.describe Mutations::AddComment, type: :graphql do
     it "returns authentication error" do
       result = execute_graphql(query: query, variables: variables, context: { current_user: nil })
 
-      expect(result["errors"].first["message"]).to eq("Authentication required")
+      data = result["data"]["addComment"]
+      expect(data["errors"].first["message"]).to eq("Authentication required")
     end
   end
 

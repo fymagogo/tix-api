@@ -3,15 +3,20 @@
 class TicketExportJob < ApplicationJob
   queue_as :exports
 
-  def perform(agent_id, filter = nil)
+  def perform(agent_id, filter = nil, closed_after: nil, closed_before: nil, fields: nil, filename: nil)
     agent = Agent.find(agent_id)
 
     scope = Ticket.closed
     scope = apply_filters(scope, filter) if filter.present?
+    scope = scope.where(closed_at: Time.iso8601(closed_after)..) if closed_after.present?
+    scope = scope.where(closed_at: ..Time.iso8601(closed_before)) if closed_before.present?
 
-    csv_data = TicketExporter.generate(scope)
+    selected_fields = fields.presence || TicketExporter::DEFAULT_FIELDS
+    csv_data = TicketExporter.generate(scope, fields: selected_fields)
 
-    ExportMailer.closed_tickets(agent, csv_data).deliver_now
+    export_filename = filename || "closed-tickets-#{Date.current.iso8601}.csv"
+
+    ExportMailer.closed_tickets(agent, csv_data, filename: export_filename).deliver_now
   end
 
   private

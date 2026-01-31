@@ -119,7 +119,8 @@ RSpec.describe Mutations::TransitionTicket, type: :graphql do
       it "returns not authorized error" do
         result = execute_graphql(query: query, variables: variables, context: { current_user: other_agent })
 
-        expect(result["errors"].first["message"]).to eq("Not authorized")
+        data = result["data"]["transitionTicket"]
+        expect(data["errors"].first["message"]).to eq("Not authorized")
       end
     end
 
@@ -136,7 +137,8 @@ RSpec.describe Mutations::TransitionTicket, type: :graphql do
       it "returns not authorized error" do
         result = execute_graphql(query: query, variables: variables, context: { current_user: customer })
 
-        expect(result["errors"].first["message"]).to eq("Not authorized")
+        data = result["data"]["transitionTicket"]
+        expect(data["errors"].first["message"]).to eq("Not authorized")
       end
     end
   end

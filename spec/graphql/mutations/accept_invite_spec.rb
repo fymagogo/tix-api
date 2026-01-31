@@ -10,7 +10,6 @@ RSpec.describe Mutations::AcceptInvite, type: :graphql do
             email
             name
           }
-          token
           errors { field message code }
         }
       }
@@ -31,13 +30,14 @@ RSpec.describe Mutations::AcceptInvite, type: :graphql do
       }
     end
 
-    it "accepts invitation and returns token" do
+    it "accepts invitation and sets auth cookies" do
       result = execute_graphql(query: query, variables: variables)
 
       data = result["data"]["acceptInvite"]
       expect(data["agent"]["email"]).to eq("invited@tix.test")
-      expect(data["token"]).to be_present
       expect(data["errors"]).to be_empty
+      expect(response_cookies["access_token"]).to be_present
+      expect(response_cookies["refresh_token"]).to be_present
     end
 
     it "marks invitation as accepted" do

@@ -44,7 +44,7 @@ class Ticket < ApplicationRecord
     end
 
     event :start_progress do
-      transitions from: [:agent_assigned, :hold], to: :in_progress
+      transitions from: :agent_assigned, to: :in_progress
     end
 
     event :put_on_hold do

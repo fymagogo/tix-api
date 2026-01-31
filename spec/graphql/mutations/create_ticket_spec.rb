@@ -49,7 +49,8 @@ RSpec.describe Mutations::CreateTicket, type: :graphql do
     it "returns customer access required error" do
       result = execute_graphql(query: query, variables: variables, context: { current_user: agent })
 
-      expect(result["errors"].first["message"]).to eq("Customer access required")
+      data = result["data"]["createTicket"]
+      expect(data["errors"].first["message"]).to eq("Customer access required")
     end
   end
 
@@ -59,7 +60,8 @@ RSpec.describe Mutations::CreateTicket, type: :graphql do
     it "returns authentication error" do
       result = execute_graphql(query: query, variables: variables, context: { current_user: nil })
 
-      expect(result["errors"].first["message"]).to eq("Authentication required")
+      data = result["data"]["createTicket"]
+      expect(data["errors"].first["message"]).to eq("Authentication required")
     end
   end
 

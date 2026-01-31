@@ -9,11 +9,8 @@ module Mutations
     argument :ticket_id, ID, required: true
 
     field :comment, Types::CommentType, null: true
-    field :errors, [Types::ErrorType], null: false
 
-    def resolve(ticket_id:, body:, attachment_ids: [])
-      authenticate!
-
+    def execute(ticket_id:, body:, attachment_ids: [])
       ticket = Ticket.find(ticket_id)
       authorize!(ticket, :show?)
 
@@ -26,21 +23,8 @@ module Mutations
         comment.attachments.attach(blobs)
       end
 
-      if comment.save
-        { comment: comment, errors: [] }
-      else
-        { comment: nil, errors: format_errors(comment) }
-      end
-    rescue ActiveRecord::RecordNotFound
-      { comment: nil, errors: [{ field: "ticket_id", message: "Ticket not found", code: "NOT_FOUND" }] }
-    end
-
-    private
-
-    def format_errors(record)
-      record.errors.map do |error|
-        { field: error.attribute.to_s, message: error.message, code: "VALIDATION_ERROR" }
-      end
+      comment.save!
+      { comment: comment }
     end
   end
 end

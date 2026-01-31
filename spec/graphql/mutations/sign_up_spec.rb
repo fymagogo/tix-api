@@ -6,7 +6,6 @@ RSpec.describe Mutations::SignUp, type: :graphql do
       mutation SignUp($email: String!, $name: String!, $password: String!, $passwordConfirmation: String!) {
         signUp(email: $email, name: $name, password: $password, passwordConfirmation: $passwordConfirmation) {
           customer { id email name }
-          token
           errors { field message code }
         }
       }
@@ -14,7 +13,7 @@ RSpec.describe Mutations::SignUp, type: :graphql do
   end
 
   describe "successful signup" do
-    it "creates customer and returns token" do
+    it "creates customer and sets auth cookies" do
       result = execute_graphql(
         query: query,
         variables: {
@@ -28,8 +27,13 @@ RSpec.describe Mutations::SignUp, type: :graphql do
       data = result["data"]["signUp"]
       expect(data["customer"]["email"]).to eq("new@test.com")
       expect(data["customer"]["name"]).to eq("New Customer")
-      expect(data["token"]).to be_present
       expect(data["errors"]).to be_empty
+
+      # Verify cookies are set
+      expect(response_cookies["access_token"]).to be_present
+      expect(response_cookies["access_token"][:httponly]).to be true
+      expect(response_cookies["refresh_token"]).to be_present
+      expect(response_cookies["refresh_token"][:httponly]).to be true
     end
   end
 
@@ -47,9 +51,9 @@ RSpec.describe Mutations::SignUp, type: :graphql do
 
       data = result["data"]["signUp"]
       expect(data["customer"]).to be_nil
-      expect(data["token"]).to be_nil
       expect(data["errors"]).not_to be_empty
-      expect(data["errors"].first["field"]).to eq("password_confirmation")
+      expect(data["errors"].first["field"]).to eq("passwordConfirmation")
+      expect(response_cookies["access_token"]).to be_nil
     end
 
     it "returns errors for duplicate email" do

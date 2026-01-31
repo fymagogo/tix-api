@@ -3,9 +3,11 @@
 module Types
   class MutationType < Types::BaseObject
     # Auth mutations
+    field :refresh_token, mutation: Mutations::RefreshTokenMutation
     field :request_password_reset, mutation: Mutations::RequestPasswordReset
     field :reset_password, mutation: Mutations::ResetPassword
     field :sign_in, mutation: Mutations::SignIn
+    field :sign_out, mutation: Mutations::SignOut
     field :sign_up, mutation: Mutations::SignUp
 
     # Agent invitation mutations

@@ -8,7 +8,6 @@ RSpec.describe "Authentication Integration", type: :graphql do
         mutation SignUp($email: String!, $name: String!, $password: String!, $passwordConfirmation: String!) {
           signUp(email: $email, name: $name, password: $password, passwordConfirmation: $passwordConfirmation) {
             customer { id email name }
-            token
             errors { field message }
           }
         }
@@ -25,7 +24,8 @@ RSpec.describe "Authentication Integration", type: :graphql do
       )
 
       expect(result.dig("data", "signUp", "customer", "email")).to eq("newuser@example.com")
-      expect(result.dig("data", "signUp", "token")).to be_present
+      expect(response_cookies["access_token"]).to be_present
+      expect(response_cookies["refresh_token"]).to be_present
 
       # Get customer from database
       customer = Customer.find_by(email: "newuser@example.com")
@@ -58,7 +58,6 @@ RSpec.describe "Authentication Integration", type: :graphql do
         mutation SignIn($email: String!, $password: String!, $userType: String) {
           signIn(email: $email, password: $password, userType: $userType) {
             user { ... on Customer { id email } }
-            token
             errors { field message }
           }
         }
@@ -70,7 +69,7 @@ RSpec.describe "Authentication Integration", type: :graphql do
       )
 
       expect(result.dig("data", "signIn", "user", "email")).to eq("existing@example.com")
-      expect(result.dig("data", "signIn", "token")).to be_present
+      expect(response_cookies["access_token"]).to be_present
     end
 
     it "rejects invalid credentials" do
@@ -81,7 +80,6 @@ RSpec.describe "Authentication Integration", type: :graphql do
         mutation SignIn($email: String!, $password: String!, $userType: String) {
           signIn(email: $email, password: $password, userType: $userType) {
             user { ... on Customer { id email } }
-            token
             errors { field message code }
           }
         }
@@ -94,6 +92,7 @@ RSpec.describe "Authentication Integration", type: :graphql do
 
       expect(result.dig("data", "signIn", "user")).to be_nil
       expect(result.dig("data", "signIn", "errors")).not_to be_empty
+      expect(response_cookies["access_token"]).to be_nil
     end
   end
 
@@ -192,7 +191,8 @@ RSpec.describe "Authentication Integration", type: :graphql do
         context: { current_user: customer },
       )
 
-      expect(result["errors"].first["message"]).to eq("Not authorized")
+      data = result["data"]["transitionTicket"]
+      expect(data["errors"].first["message"]).to eq("Not authorized")
     end
 
     it "prevents regular agent from inviting other agents" do

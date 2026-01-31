@@ -3,10 +3,21 @@
 RSpec.describe Mutations::ExportClosedTickets, type: :graphql do
   let(:query) do
     <<~GQL
-      mutation ExportClosedTickets($filter: TicketFilterInput) {
-        exportClosedTickets(filter: $filter) {
+      mutation ExportClosedTickets(
+        $filter: TicketFilterInput
+        $closedAfter: ISO8601DateTime
+        $closedBefore: ISO8601DateTime
+        $fields: [String!]
+      ) {
+        exportClosedTickets(
+          filter: $filter
+          closedAfter: $closedAfter
+          closedBefore: $closedBefore
+          fields: $fields
+        ) {
           csv
           async
+          filename
           errors { field message code }
         }
       }
@@ -103,13 +114,115 @@ RSpec.describe Mutations::ExportClosedTickets, type: :graphql do
         expect(data["async"]).to be false
       end
     end
+
+    context "with closed date range" do
+      let!(:recent_ticket) do
+        create(:ticket, :closed, customer: customer, assigned_agent: agent, subject: "Recent ticket").tap do |t|
+          t.update_column(:closed_at, 3.days.ago)
+        end
+      end
+      let!(:old_ticket) do
+        create(:ticket, :closed, customer: customer, assigned_agent: agent, subject: "Old ticket").tap do |t|
+          t.update_column(:closed_at, 30.days.ago)
+        end
+      end
+
+      it "filters by closedAfter" do
+        result = execute_graphql(
+          query: query,
+          variables: { closedAfter: 7.days.ago.iso8601 },
+          context: { current_user: agent },
+        )
+
+        data = result["data"]["exportClosedTickets"]
+        expect(data["csv"]).to include("Recent ticket")
+        expect(data["csv"]).not_to include("Old ticket")
+      end
+
+      it "filters by closedBefore" do
+        result = execute_graphql(
+          query: query,
+          variables: { closedBefore: 7.days.ago.iso8601 },
+          context: { current_user: agent },
+        )
+
+        data = result["data"]["exportClosedTickets"]
+        expect(data["csv"]).not_to include("Recent ticket")
+        expect(data["csv"]).to include("Old ticket")
+      end
+
+      it "includes date range in filename" do
+        result = execute_graphql(
+          query: query,
+          variables: {
+            closedAfter: 30.days.ago.beginning_of_day.iso8601,
+            closedBefore: Time.current.end_of_day.iso8601,
+          },
+          context: { current_user: agent },
+        )
+
+        data = result["data"]["exportClosedTickets"]
+        expect(data["filename"]).to match(/closed-tickets-\d{8}-to-\d{8}\.csv/)
+      end
+
+      it "uses 'all-time' in filename when no date range specified" do
+        result = execute_graphql(
+          query: query,
+          context: { current_user: agent },
+        )
+
+        data = result["data"]["exportClosedTickets"]
+        expect(data["filename"]).to eq("closed-tickets-all-time.csv")
+      end
+    end
+
+    context "with custom fields" do
+      let!(:closed_ticket) { create(:ticket, :closed, customer: customer, assigned_agent: agent) }
+
+      it "exports only specified fields" do
+        result = execute_graphql(
+          query: query,
+          variables: { fields: ["id", "subject", "customer_email"] },
+          context: { current_user: agent },
+        )
+
+        data = result["data"]["exportClosedTickets"]
+        csv_lines = data["csv"].split("\n")
+        expect(csv_lines.first).to eq("ID,Subject,Customer Email")
+        expect(data["csv"]).to include(customer.email)
+      end
+
+      it "returns error for invalid fields" do
+        result = execute_graphql(
+          query: query,
+          variables: { fields: ["id", "invalid_field"] },
+          context: { current_user: agent },
+        )
+
+        data = result["data"]["exportClosedTickets"]
+        expect(data["errors"].first["message"]).to include("Invalid fields: invalid_field")
+      end
+
+      it "uses default fields when not specified" do
+        result = execute_graphql(
+          query: query,
+          context: { current_user: agent },
+        )
+
+        data = result["data"]["exportClosedTickets"]
+        csv_lines = data["csv"].split("\n")
+        expect(csv_lines.first).to include("ID", "Subject", "Status", "Customer Name", "Assigned Agent")
+        expect(csv_lines.first).not_to include("Customer Email")
+      end
+    end
   end
 
   describe "as customer" do
     it "returns agent access required error" do
       result = execute_graphql(query: query, context: { current_user: customer })
 
-      expect(result["errors"].first["message"]).to eq("Agent access required")
+      data = result["data"]["exportClosedTickets"]
+      expect(data["errors"].first["message"]).to eq("Agent access required")
     end
   end
 
@@ -117,7 +230,8 @@ RSpec.describe Mutations::ExportClosedTickets, type: :graphql do
     it "returns authentication error" do
       result = execute_graphql(query: query, context: { current_user: nil })
 
-      expect(result["errors"].first["message"]).to eq("Authentication required")
+      data = result["data"]["exportClosedTickets"]
+      expect(data["errors"].first["message"]).to eq("Authentication required")
     end
   end
 end

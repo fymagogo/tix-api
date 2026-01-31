@@ -2,6 +2,8 @@
 
 module Mutations
   class InviteAgent < BaseMutation
+    requires_role :admin
+
     description "Invite a new agent (admin only)"
 
     argument :email, String, required: true
@@ -9,30 +11,20 @@ module Mutations
     argument :name, String, required: true
 
     field :agent, Types::AgentType, null: true
-    field :errors, [Types::ErrorType], null: false
 
-    def resolve(email:, name:, is_admin:)
-      require_admin!
-
+    def execute(email:, name:, is_admin:)
       agent = Agent.invite!(
         { email: email, name: name, is_admin: is_admin },
         current_user,
       )
 
       if agent.persisted? && agent.errors.empty?
-        { agent: agent, errors: [] }
+        { agent: agent }
       else
-        { agent: nil, errors: format_errors(agent) }
-      end
-    rescue StandardError => e
-      { agent: nil, errors: [{ field: "base", message: e.message, code: "INVITE_ERROR" }] }
-    end
-
-    private
-
-    def format_errors(record)
-      record.errors.map do |error|
-        { field: error.attribute.to_s, message: error.message, code: "VALIDATION_ERROR" }
+        agent.errors.each do |err|
+          error(err.full_message, field: err.attribute.to_s, code: "VALIDATION_ERROR")
+        end
+        { agent: nil }
       end
     end
   end

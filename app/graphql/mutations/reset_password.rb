@@ -2,6 +2,8 @@
 
 module Mutations
   class ResetPassword < BaseMutation
+    requires_auth false
+
     description "Reset password using token"
 
     argument :password, String, required: true
@@ -9,10 +11,9 @@ module Mutations
     argument :token, String, required: true
     argument :user_type, String, required: false, default_value: "customer"
 
-    field :errors, [Types::ErrorType], null: false
     field :success, Boolean, null: false
 
-    def resolve(token:, password:, password_confirmation:, user_type:)
+    def execute(token:, password:, password_confirmation:, user_type:)
       klass = user_type == "agent" ? Agent : Customer
       user = klass.reset_password_by_token(
         reset_password_token: token,
@@ -21,17 +22,12 @@ module Mutations
       )
 
       if user.errors.empty?
-        { success: true, errors: [] }
+        { success: true }
       else
-        { success: false, errors: format_errors(user) }
-      end
-    end
-
-    private
-
-    def format_errors(record)
-      record.errors.map do |error|
-        { field: error.attribute.to_s, message: error.message, code: "VALIDATION_ERROR" }
+        user.errors.each do |err|
+          error(err.full_message, field: err.attribute.to_s, code: "VALIDATION_ERROR")
+        end
+        { success: false }
       end
     end
   end

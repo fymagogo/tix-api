@@ -2,40 +2,25 @@
 
 module Mutations
   class AssignTicket < BaseMutation
+    requires_role :admin
+
     description "Manually assign a ticket to an agent (admin only)"
 
     argument :agent_id, ID, required: true
     argument :ticket_id, ID, required: true
 
-    field :errors, [Types::ErrorType], null: false
     field :ticket, Types::TicketType, null: true
 
-    def resolve(ticket_id:, agent_id:)
-      require_admin!
-
+    def execute(ticket_id:, agent_id:)
       ticket = Ticket.find(ticket_id)
       agent = Agent.find(agent_id)
 
-      ActiveRecord::Base.transaction do
-        ticket.assigned_agent = agent
-        ticket.assign_agent! if ticket.may_assign_agent?
-        ticket.save!
-        agent.touch(:last_assigned_at)
-      end
+      ticket.assigned_agent = agent
+      ticket.assign_agent! if ticket.may_assign_agent?
+      ticket.save!
+      agent.touch(:last_assigned_at)
 
-      { ticket: ticket, errors: [] }
-    rescue ActiveRecord::RecordNotFound => e
-      { ticket: nil, errors: [{ field: "base", message: e.message, code: "NOT_FOUND" }] }
-    rescue ActiveRecord::RecordInvalid => e
-      { ticket: nil, errors: format_errors(e.record) }
-    end
-
-    private
-
-    def format_errors(record)
-      record.errors.map do |error|
-        { field: error.attribute.to_s, message: error.message, code: "VALIDATION_ERROR" }
-      end
+      { ticket: ticket }
     end
   end
 end

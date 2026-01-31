@@ -2,6 +2,10 @@
 
 module Mutations
   class AcceptInvite < BaseMutation
+    include CookieAuth
+
+    requires_auth false
+
     description "Accept an agent invitation"
 
     argument :invitation_token, String, required: true
@@ -9,10 +13,8 @@ module Mutations
     argument :password_confirmation, String, required: true
 
     field :agent, Types::AgentType, null: true
-    field :errors, [Types::ErrorType], null: false
-    field :token, String, null: true
 
-    def resolve(invitation_token:, password:, password_confirmation:)
+    def execute(invitation_token:, password:, password_confirmation:)
       agent = Agent.accept_invitation!(
         invitation_token: invitation_token,
         password: password,
@@ -20,20 +22,13 @@ module Mutations
       )
 
       if agent.errors.empty?
-        token = agent.generate_jwt
-        { agent: agent, token: token, errors: [] }
+        set_auth_cookies(agent, context[:response])
+        { agent: agent }
       else
-        { agent: nil, token: nil, errors: format_errors(agent) }
-      end
-    rescue StandardError => e
-      { agent: nil, token: nil, errors: [{ field: "base", message: e.message, code: "INVITATION_ERROR" }] }
-    end
-
-    private
-
-    def format_errors(record)
-      record.errors.map do |error|
-        { field: error.attribute.to_s, message: error.message, code: "VALIDATION_ERROR" }
+        agent.errors.each do |err|
+          error(err.full_message, field: err.attribute.to_s, code: "VALIDATION_ERROR")
+        end
+        { agent: nil }
       end
     end
   end

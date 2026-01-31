@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 class ExportMailer < ApplicationMailer
-  def closed_tickets(agent, csv_data)
+  def closed_tickets(agent, csv_data, filename: nil)
     @agent = agent
-    attachments["closed_tickets_#{Date.current.iso8601}.csv"] = {
+    export_filename = filename || "closed_tickets_#{Date.current.iso8601}.csv"
+
+    attachments[export_filename] = {
       mime_type: "text/csv",
       content: csv_data,
     }
