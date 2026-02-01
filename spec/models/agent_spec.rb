@@ -26,15 +26,21 @@ RSpec.describe Agent do
       let!(:agent2) { create(:agent, last_assigned_at: 1.hour.ago) }
       let!(:agent3) { create(:agent, last_assigned_at: nil) }
 
-      it "returns the agent with the oldest assignment (round-robin)" do
-        # NULL last_assigned_at is treated as very old (never assigned), but PostgreSQL
-        # sorts NULL as the greatest value by default, so agent1 is returned first
+      it "returns agent who has never been assigned first (NULL last_assigned_at)" do
+        # Agents who have never been assigned should be picked first
+        expect(described_class.next_for_assignment).to eq(agent3)
+      end
+
+      it "returns the agent with the oldest assignment when all have been assigned" do
+        agent3.update!(last_assigned_at: Time.current)
         expect(described_class.next_for_assignment).to eq(agent1)
       end
 
       it "updates last_assigned_at after assignment" do
-        agent = described_class.next_for_assignment
-        agent.update!(last_assigned_at: Time.current)
+        # After agent3 is assigned, agent1 (oldest) should be next
+        agent3.update!(last_assigned_at: Time.current)
+        expect(described_class.next_for_assignment).to eq(agent1)
+        agent1.update!(last_assigned_at: Time.current)
         expect(described_class.next_for_assignment).to eq(agent2)
       end
     end

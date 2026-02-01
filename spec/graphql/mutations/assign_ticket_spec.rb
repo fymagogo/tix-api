@@ -40,14 +40,29 @@ RSpec.describe Mutations::AssignTicket, type: :graphql do
     end
   end
 
-  describe "non-admin agent attempting to assign" do
+  describe "non-admin agent attempting to assign unassigned ticket" do
     let(:variables) { { ticketId: ticket.id, agentId: agent.id } }
 
-    it "returns admin access required error" do
+    it "returns not authorized error" do
       result = execute_graphql(query: query, variables: variables, context: { current_user: agent })
 
       data = result["data"]["assignTicket"]
-      expect(data["errors"].first["message"]).to eq("Admin access required")
+      expect(data["errors"].first["message"]).to eq("Not authorized")
+      expect(data["errors"].first["code"]).to eq("UNAUTHORIZED")
+    end
+  end
+
+  describe "assigned agent reassigning their own ticket" do
+    let(:assigned_ticket) { create(:ticket, :with_agent, customer: customer, assigned_agent: agent) }
+    let(:other_agent) { create(:agent) }
+    let(:variables) { { ticketId: assigned_ticket.id, agentId: other_agent.id } }
+
+    it "allows reassignment" do
+      result = execute_graphql(query: query, variables: variables, context: { current_user: agent })
+
+      data = result["data"]["assignTicket"]
+      expect(data["ticket"]["assignedAgent"]["id"]).to eq(other_agent.id)
+      expect(data["errors"]).to be_empty
     end
   end
 

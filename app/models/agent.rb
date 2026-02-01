@@ -25,8 +25,9 @@ class Agent < ApplicationRecord
   end
 
   # Round-robin assignment: get non-admin agent with oldest last_assigned_at
+  # Agents who have never been assigned (NULL) should be picked first
   def self.next_for_assignment
-    active.where(is_admin: false).order(last_assigned_at: :asc).first
+    active.where(is_admin: false).order(Arel.sql("last_assigned_at ASC NULLS FIRST")).first
   end
 
   # Generate a JWT token for this agent (used by GraphQL sign-in)

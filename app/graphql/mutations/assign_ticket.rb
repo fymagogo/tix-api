@@ -2,9 +2,9 @@
 
 module Mutations
   class AssignTicket < BaseMutation
-    requires_role :admin
+    requires_role :agent
 
-    description "Manually assign a ticket to an agent (admin only)"
+    description "Assign or reassign a ticket to an agent"
 
     argument :agent_id, ID, required: true
     argument :ticket_id, ID, required: true
@@ -13,6 +13,8 @@ module Mutations
 
     def execute(ticket_id:, agent_id:)
       ticket = Ticket.find(ticket_id)
+      authorize!(ticket, :reassign?)
+
       agent = Agent.find(agent_id)
 
       ticket.assigned_agent = agent
