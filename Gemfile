@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby "4.0.1"
+ruby ">= 3.3.0"
 
 gem "bootsnap", require: false
 gem "pg", "~> 1.5"

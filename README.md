@@ -8,7 +8,7 @@ Before you begin, ensure you have the following installed:
 
 | Dependency | Version | Installation |
 |------------|---------|--------------|
-| Ruby | 3.2.2+ | [rbenv](https://github.com/rbenv/rbenv#installation) or [rvm](https://rvm.io/rvm/install) |
+| Ruby | 3.3+ | [rbenv](https://github.com/rbenv/rbenv#installation) or [rvm](https://rvm.io/rvm/install) |
 | Rails | 7.1+ | `gem install rails` (after Ruby) |
 | PostgreSQL | 15+ | [PostgreSQL Downloads](https://www.postgresql.org/download/) or `brew install postgresql@15` |
 | Redis | 7+ | [Redis Downloads](https://redis.io/download/) or `brew install redis` |
