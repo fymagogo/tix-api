@@ -41,8 +41,8 @@ RSpec.describe "GraphQL Mutations" do
         expect(json.dig("data", "signUp", "errors")).to be_empty
 
         # Verify auth cookies are set
-        expect(response.cookies["access_token"]).to be_present
-        expect(response.cookies["refresh_token"]).to be_present
+        expect(response.cookies["customer_access_token"]).to be_present
+        expect(response.cookies["customer_refresh_token"]).to be_present
       end
     end
 

@@ -24,8 +24,8 @@ RSpec.describe "Authentication Integration", type: :graphql do
       )
 
       expect(result.dig("data", "signUp", "customer", "email")).to eq("newuser@example.com")
-      expect(response_cookies["access_token"]).to be_present
-      expect(response_cookies["refresh_token"]).to be_present
+      expect(response_cookies["customer_access_token"]).to be_present
+      expect(response_cookies["customer_refresh_token"]).to be_present
 
       # Get customer from database
       customer = Customer.find_by(email: "newuser@example.com")
@@ -69,7 +69,7 @@ RSpec.describe "Authentication Integration", type: :graphql do
       )
 
       expect(result.dig("data", "signIn", "user", "email")).to eq("existing@example.com")
-      expect(response_cookies["access_token"]).to be_present
+      expect(response_cookies["customer_access_token"]).to be_present
     end
 
     it "rejects invalid credentials" do
@@ -92,7 +92,7 @@ RSpec.describe "Authentication Integration", type: :graphql do
 
       expect(result.dig("data", "signIn", "user")).to be_nil
       expect(result.dig("data", "signIn", "errors")).not_to be_empty
-      expect(response_cookies["access_token"]).to be_nil
+      expect(response_cookies["customer_access_token"]).to be_nil
     end
   end
 

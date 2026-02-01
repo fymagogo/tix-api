@@ -36,8 +36,8 @@ RSpec.describe Mutations::AcceptInvite, type: :graphql do
       data = result["data"]["acceptInvite"]
       expect(data["agent"]["email"]).to eq("invited@tix.test")
       expect(data["errors"]).to be_empty
-      expect(response_cookies["access_token"]).to be_present
-      expect(response_cookies["refresh_token"]).to be_present
+      expect(response_cookies["agent_access_token"]).to be_present
+      expect(response_cookies["agent_refresh_token"]).to be_present
     end
 
     it "marks invitation as accepted" do

@@ -28,12 +28,6 @@ class GraphQLController < ApplicationController
 
   private
 
-  ACCESS_TOKEN_COOKIE = :access_token
-
-  def access_token_from_cookie
-    cookies[ACCESS_TOKEN_COOKIE]
-  end
-
   def decode_jwt(token)
     return nil if token.blank?
 
@@ -47,21 +41,25 @@ class GraphQLController < ApplicationController
   end
 
   def current_customer_from_cookie
-    @current_customer_from_cookie ||= begin
-      payload = decode_jwt(access_token_from_cookie)
-      return nil unless payload && payload["sub"] && payload["scp"] == "customer"
+    @current_customer_from_cookie ||= fetch_customer_from_cookie
+  end
 
-      Customer.find_by(id: payload["sub"], jti: payload["jti"])
-    end
+  def fetch_customer_from_cookie
+    payload = decode_jwt(cookies["customer_access_token"])
+    return nil unless payload && payload["sub"] && payload["scp"] == "customer"
+
+    Customer.find_by(id: payload["sub"], jti: payload["jti"])
   end
 
   def current_agent_from_cookie
-    @current_agent_from_cookie ||= begin
-      payload = decode_jwt(access_token_from_cookie)
-      return nil unless payload && payload["sub"] && payload["scp"] == "agent"
+    @current_agent_from_cookie ||= fetch_agent_from_cookie
+  end
 
-      Agent.find_by(id: payload["sub"], jti: payload["jti"])
-    end
+  def fetch_agent_from_cookie
+    payload = decode_jwt(cookies["agent_access_token"])
+    return nil unless payload && payload["sub"] && payload["scp"] == "agent"
+
+    Agent.find_by(id: payload["sub"], jti: payload["jti"])
   end
 
   def prepare_variables(variables_param)

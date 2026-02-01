@@ -28,11 +28,11 @@ RSpec.describe Mutations::SignIn, type: :graphql do
         expect(data["user"]["email"]).to eq("test@example.com")
         expect(data["errors"]).to be_empty
 
-        # Verify cookies are set
-        expect(response_cookies["access_token"]).to be_present
-        expect(response_cookies["access_token"][:httponly]).to be true
-        expect(response_cookies["refresh_token"]).to be_present
-        expect(response_cookies["refresh_token"][:httponly]).to be true
+        # Verify cookies are set (scoped by user type)
+        expect(response_cookies["customer_access_token"]).to be_present
+        expect(response_cookies["customer_access_token"][:httponly]).to be true
+        expect(response_cookies["customer_refresh_token"]).to be_present
+        expect(response_cookies["customer_refresh_token"][:httponly]).to be true
       end
     end
 
@@ -45,7 +45,7 @@ RSpec.describe Mutations::SignIn, type: :graphql do
         data = result["data"]["signIn"]
         expect(data["user"]).to be_nil
         expect(data["errors"].first["code"]).to eq("INVALID_CREDENTIALS")
-        expect(response_cookies["access_token"]).to be_nil
+        expect(response_cookies["customer_access_token"]).to be_nil
       end
     end
 
@@ -75,9 +75,9 @@ RSpec.describe Mutations::SignIn, type: :graphql do
         expect(data["user"]["email"]).to eq("agent@tix.test")
         expect(data["errors"]).to be_empty
 
-        # Verify cookies are set
-        expect(response_cookies["access_token"]).to be_present
-        expect(response_cookies["refresh_token"]).to be_present
+        # Verify cookies are set (scoped by user type)
+        expect(response_cookies["agent_access_token"]).to be_present
+        expect(response_cookies["agent_refresh_token"]).to be_present
       end
     end
 

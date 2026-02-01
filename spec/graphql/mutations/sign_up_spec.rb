@@ -30,10 +30,10 @@ RSpec.describe Mutations::SignUp, type: :graphql do
       expect(data["errors"]).to be_empty
 
       # Verify cookies are set
-      expect(response_cookies["access_token"]).to be_present
-      expect(response_cookies["access_token"][:httponly]).to be true
-      expect(response_cookies["refresh_token"]).to be_present
-      expect(response_cookies["refresh_token"][:httponly]).to be true
+      expect(response_cookies["customer_access_token"]).to be_present
+      expect(response_cookies["customer_access_token"][:httponly]).to be true
+      expect(response_cookies["customer_refresh_token"]).to be_present
+      expect(response_cookies["customer_refresh_token"][:httponly]).to be true
     end
   end
 
@@ -53,7 +53,7 @@ RSpec.describe Mutations::SignUp, type: :graphql do
       expect(data["customer"]).to be_nil
       expect(data["errors"]).not_to be_empty
       expect(data["errors"].first["field"]).to eq("passwordConfirmation")
-      expect(response_cookies["access_token"]).to be_nil
+      expect(response_cookies["customer_access_token"]).to be_nil
     end
 
     it "returns errors for duplicate email" do
