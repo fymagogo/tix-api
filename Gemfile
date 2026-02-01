@@ -52,6 +52,8 @@ gem "jbuilder", "~> 2.11"
 # CSV (required in Ruby 3.4+)
 gem "csv", "~> 3.3"
 
+gem "dotenv-rails", groups: [:development, :test]
+
 group :development, :test do
   gem "debug", platforms: [:mri, :windows]
   gem "factory_bot_rails", "~> 6.4"

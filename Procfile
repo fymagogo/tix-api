@@ -1,3 +1,3 @@
-web: bin/rails server -p ${PORT:-3000} -b 0.0.0.0
-worker: bundle exec sidekiq
-release: bin/rails db:migrate
+web: bundle exec puma -C config/puma.rb
+worker: bundle exec sidekiq -C config/sidekiq.yml
+release: bundle exec rails db:migrate db:seed
