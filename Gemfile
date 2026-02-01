@@ -37,6 +37,9 @@ gem "sidekiq-scheduler", "~> 5.0"
 # Email
 gem "sendgrid-actionmailer", "~> 3.2"
 
+# AWS S3 for ActiveStorage
+gem "aws-sdk-s3", "~> 1.169", require: false
+
 # CORS
 gem "rack-cors", "~> 2.0"
 
