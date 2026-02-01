@@ -52,7 +52,7 @@ module Types
 
     def agents
       authorize_record(Agent, :index?)
-      Agent.active.order(:name)
+      Agent.order(:name)
     end
 
     def agent(id:)

@@ -114,11 +114,11 @@ RSpec.describe Types::QueryType, type: :graphql do
         expect(agents.any? { |a| a["id"] == agent.id }).to be true
       end
 
-      it "excludes pending agents" do
+      it "includes pending agents" do
         result = execute_graphql(query: query, context: { current_user: agent })
 
         agents = result["data"]["agents"]
-        expect(agents.none? { |a| a["id"] == pending_agent.id }).to be true
+        expect(agents.any? { |a| a["id"] == pending_agent.id }).to be true
       end
     end
 
