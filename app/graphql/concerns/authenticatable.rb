@@ -38,11 +38,13 @@ module Authenticatable
   end
 
   # Called before resolve - checks authentication and role requirements
-  # Returns true if authorized, otherwise calls error! and returns false
+  # Returns true if authorized, otherwise raises GraphQL::ExecutionError
   def check_auth!
     if self.class.requires_auth? && !signed_in?
-      error!("Authentication required", code: "UNAUTHENTICATED")
-      return false
+      raise GraphQL::ExecutionError.new(
+        "Authentication required",
+        extensions: { code: "UNAUTHENTICATED" },
+      )
     end
 
     check_required_roles!
@@ -56,19 +58,25 @@ module Authenticatable
 
     # Check agent role (including when admin is required, since admin must be an agent)
     if (roles.include?(:agent) || roles.include?(:admin)) && !current_user.is_a?(Agent)
-      error!("Agent access required", code: "UNAUTHORIZED")
-      return false
+      raise GraphQL::ExecutionError.new(
+        "Agent access required",
+        extensions: { code: "UNAUTHORIZED" },
+      )
     end
 
     # Check admin role (must be an agent first, checked above)
     if roles.include?(:admin) && !current_user.is_admin
-      error!("Admin access required", code: "UNAUTHORIZED")
-      return false
+      raise GraphQL::ExecutionError.new(
+        "Admin access required",
+        extensions: { code: "UNAUTHORIZED" },
+      )
     end
 
     if roles.include?(:customer) && !current_user.is_a?(Customer)
-      error!("Customer access required", code: "UNAUTHORIZED")
-      return false
+      raise GraphQL::ExecutionError.new(
+        "Customer access required",
+        extensions: { code: "UNAUTHORIZED" },
+      )
     end
 
     true

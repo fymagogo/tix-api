@@ -211,10 +211,9 @@ RSpec.describe "Authentication Integration", type: :graphql do
         context: { current_user: agent, current_agent: agent },
       )
 
-      # Error returned as mutation error, not GraphQL error
-      mutation_errors = result.dig("data", "inviteAgent", "errors")
-      expect(mutation_errors.first["message"]).to eq("Admin access required")
-      expect(result.dig("data", "inviteAgent", "agent")).to be_nil
+      # Error returned as GraphQL-level error
+      expect(result["errors"].first["message"]).to eq("Admin access required")
+      expect(result["errors"].first["extensions"]["code"]).to eq("UNAUTHORIZED")
     end
   end
 end

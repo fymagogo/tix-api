@@ -72,9 +72,8 @@ RSpec.describe Mutations::CreateDirectUpload, type: :graphql do
         context: {},
       )
 
-      data = result.dig("data", "createDirectUpload")
-      expect(data["directUpload"]).to be_nil
-      expect(data["errors"]).not_to be_empty
+      expect(result["errors"].first["message"]).to eq("Authentication required")
+      expect(result["errors"].first["extensions"]["code"]).to eq("UNAUTHENTICATED")
     end
   end
 

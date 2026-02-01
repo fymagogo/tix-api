@@ -13,8 +13,8 @@ module Mutations
     field :errors, [Types::ErrorType], null: false
 
     def resolve(**args)
-      # Check authentication/authorization first
-      return serialize_with_errors({}) unless check_auth!
+      # Check authentication/authorization first (raises GraphQL::ExecutionError if fails)
+      check_auth!
 
       ActiveRecord::Base.transaction do
         serialize_with_errors(execute(**args))
@@ -32,6 +32,8 @@ module Mutations
     rescue AASM::InvalidTransition => e
       error("Invalid status transition: #{e.message}", code: "INVALID_TRANSITION")
       serialize_with_errors({})
+    rescue GraphQL::ExecutionError
+      raise # Re-raise GraphQL errors so they go to the client properly
     rescue StandardError => e
       handle_unexpected_error(e)
     end

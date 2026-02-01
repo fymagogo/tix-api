@@ -221,8 +221,8 @@ RSpec.describe Mutations::ExportClosedTickets, type: :graphql do
     it "returns agent access required error" do
       result = execute_graphql(query: query, context: { current_user: customer })
 
-      data = result["data"]["exportClosedTickets"]
-      expect(data["errors"].first["message"]).to eq("Agent access required")
+      expect(result["errors"].first["message"]).to eq("Agent access required")
+      expect(result["errors"].first["extensions"]["code"]).to eq("UNAUTHORIZED")
     end
   end
 
@@ -230,8 +230,8 @@ RSpec.describe Mutations::ExportClosedTickets, type: :graphql do
     it "returns authentication error" do
       result = execute_graphql(query: query, context: { current_user: nil })
 
-      data = result["data"]["exportClosedTickets"]
-      expect(data["errors"].first["message"]).to eq("Authentication required")
+      expect(result["errors"].first["message"]).to eq("Authentication required")
+      expect(result["errors"].first["extensions"]["code"]).to eq("UNAUTHENTICATED")
     end
   end
 end

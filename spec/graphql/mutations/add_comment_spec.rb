@@ -87,8 +87,8 @@ RSpec.describe Mutations::AddComment, type: :graphql do
     it "returns authentication error" do
       result = execute_graphql(query: query, variables: variables, context: { current_user: nil })
 
-      data = result["data"]["addComment"]
-      expect(data["errors"].first["message"]).to eq("Authentication required")
+      expect(result["errors"].first["message"]).to eq("Authentication required")
+      expect(result["errors"].first["extensions"]["code"]).to eq("UNAUTHENTICATED")
     end
   end
 
