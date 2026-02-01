@@ -37,7 +37,15 @@ class GraphQLController < ApplicationController
   end
 
   def current_user_from_cookie
-    current_customer_from_cookie || current_agent_from_cookie
+    # Use X-User-Type header to determine which cookie to check first
+    # This allows both portals to be logged in simultaneously
+    user_type = request.headers["X-User-Type"]
+
+    if user_type == "agent"
+      current_agent_from_cookie || current_customer_from_cookie
+    else
+      current_customer_from_cookie || current_agent_from_cookie
+    end
   end
 
   def current_customer_from_cookie
