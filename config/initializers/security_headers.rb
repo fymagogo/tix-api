@@ -33,4 +33,5 @@ class SecurityHeaders
 end
 
 # Only add in production
-Rails.application.config.middleware.insert_after ActionDispatch::Static, SecurityHeaders if Rails.env.production?
+# Use Rack::Sendfile instead of ActionDispatch::Static since Static is disabled in production API-only mode
+Rails.application.config.middleware.insert_after Rack::Sendfile, SecurityHeaders if Rails.env.production?
