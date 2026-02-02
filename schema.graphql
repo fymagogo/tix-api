@@ -315,7 +315,7 @@ type Mutation {
     closedAfter: ISO8601DateTime
 
     """
-    Filter tickets closed on or before this date
+    Filter closed on or before this date
     """
     closedBefore: ISO8601DateTime
 

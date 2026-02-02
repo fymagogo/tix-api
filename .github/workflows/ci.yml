@@ -69,7 +69,6 @@ jobs:
   lint:
     name: Lint (RuboCop)
     runs-on: ubuntu-latest
-    continue-on-error: true
 
     steps:
       - name: Checkout code
@@ -81,10 +80,11 @@ jobs:
           ruby-version: '3.3'
           bundler-cache: true
 
-      - name: Run RuboCop (auto-correct and report)
+      - name: Run RuboCop (auto-correct and check)
         run: |
-          bundle exec rubocop --parallel --autocorrect --format progress || true
-          echo "::warning::RuboCop found issues - check output above"
+          # Auto-correct what we can, then check for remaining issues
+          bundle exec rubocop --parallel --autocorrect-all --format progress
+          # If we get here, no unfixable errors remain
 
   graphql-schema:
     name: Validate GraphQL Schema
