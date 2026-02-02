@@ -185,7 +185,6 @@ RSpec/NestedGroups:
   Max: 4
 
 # Note: RSpec/ContextWording is disabled above due to rubocop-rspec bug
-    - returns
 
 RSpec/DescribeClass:
   Exclude:
