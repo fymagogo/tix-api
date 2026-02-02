@@ -184,20 +184,7 @@ RSpec/MultipleExpectations:
 RSpec/NestedGroups:
   Max: 4
 
-RSpec/ContextWording:
-  Prefixes:
-    - when
-    - with
-    - without
-    - if
-    - unless
-    - for
-    - and
-    - as
-    - after
-    - before
-    - on
-    - the
+# Note: RSpec/ContextWording is disabled above due to rubocop-rspec bug
     - returns
 
 RSpec/DescribeClass:
