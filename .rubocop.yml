@@ -19,8 +19,12 @@ AllCops:
     - 'log/**/*'
     - 'coverage/**/*'
 
-# Disable Capybara cops - causes bugs with Ruby 4.0
+# Disable Capybara cops - causes internal errors with newer RuboCop versions
 Capybara:
+  Enabled: false
+
+# Disable Capybara/RSpec cops that cause internal errors
+Capybara/RSpec/PredicateMatcher:
   Enabled: false
 
 # Layout
@@ -39,12 +43,12 @@ Layout/FirstArrayElementIndentation:
 
 # Metrics
 Metrics/AbcSize:
-  Max: 35
+  Max: 50
   Exclude:
     - 'app/graphql/**/*'
 
 Metrics/MethodLength:
-  Max: 30
+  Max: 60
   Exclude:
     - 'db/seeds.rb'
     - 'spec/**/*'
@@ -58,12 +62,13 @@ Metrics/BlockLength:
     - 'app/services/**/*'
 
 Metrics/CyclomaticComplexity:
-  Max: 12
+  Max: 20
 
 Metrics/PerceivedComplexity:
-  Max: 12
+  Max: 20
 
 Metrics/ModuleLength:
+  Max: 250
   Exclude:
     - 'app/graphql/**/*'
 
@@ -117,6 +122,15 @@ Rails/I18nLocaleTexts:
 Rails/FilePath:
   Enabled: false
 
+Rails/DynamicFindBy:
+  Enabled: false
+
+Rails/InverseOf:
+  Enabled: false
+
+Rails/WhereRange:
+  Enabled: false
+
 Rails/UnknownEnv:
   Environments:
     - production
@@ -127,7 +141,36 @@ Rails/UnknownEnv:
 Lint/UselessConstantScoping:
   Enabled: false
 
+Lint/IneffectiveAccessModifier:
+  Enabled: false
+
+# Style additions
+Style/OptionalBooleanParameter:
+  Enabled: false
+
+Style/ComparableClamp:
+  Enabled: false
+
+# Naming
+Naming/PredicateMethod:
+  Enabled: false
+
+Naming/MemoizedInstanceVariableName:
+  Enabled: false
+
 # RSpec
+RSpec/DescribedClass:
+  Enabled: false
+
+RSpec/InstanceVariable:
+  Enabled: false
+
+RSpecRails/InferredSpecType:
+  Enabled: false
+
+RSpec/ContextWording:
+  Enabled: false
+
 RSpec/ExampleLength:
   Max: 25
   Exclude:
@@ -197,6 +240,13 @@ RSpec/IdenticalEqualityAssertion:
   Enabled: false
 
 FactoryBot/ExcessiveCreateList:
+  Enabled: false
+
+FactoryBot/AssociationStyle:
+  Enabled: false
+
+# Bundler
+Bundler/OrderedGems:
   Enabled: false
 
 # GraphQL

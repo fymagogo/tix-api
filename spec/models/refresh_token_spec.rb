@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe RefreshToken, type: :model do
+RSpec.describe RefreshToken do
   describe "associations" do
     it { is_expected.to belong_to(:user) }
   end

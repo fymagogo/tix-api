@@ -9,7 +9,7 @@ module Mutations
     argument :closed_after, GraphQL::Types::ISO8601DateTime, required: false,
                                                              description: "Filter tickets closed on or after this date"
     argument :closed_before, GraphQL::Types::ISO8601DateTime, required: false,
-                                                              description: "Filter tickets closed on or before this date"
+                                                              description: "Filter closed on or before this date"
     argument :fields, [String], required: false,
                                 description: "Fields to include in export (defaults to standard set)"
     argument :filter, Types::Inputs::TicketFilterInputType, required: false

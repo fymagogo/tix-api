@@ -27,7 +27,6 @@ module Types
     end
     # rubocop:enable Naming/PredicatePrefix
 
-    # rubocop:disable Naming/PredicateMethod
     def invitation_pending
       object.invitation_token.present? && object.invitation_accepted_at.nil?
     end

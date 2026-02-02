@@ -45,7 +45,6 @@ module Types
       object.comments.ordered
     end
 
-    # rubocop:disable Naming/PredicateMethod
     def can_comment
       return false if object.closed?
 

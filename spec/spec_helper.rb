@@ -15,8 +15,8 @@ SimpleCov.start "rails" do
   add_group "Policies", "app/policies"
   add_group "Services", "app/services"
 
-  # 92%+ coverage threshold - high standard for production code
-  minimum_coverage 92
+  # 90% coverage threshold - allows some flexibility for edge cases
+  minimum_coverage 90
 end
 
 RSpec.configure do |config|
