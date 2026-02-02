@@ -67,6 +67,7 @@ group :development, :test do
   gem "rubocop-graphql", "~> 1.5", require: false
   gem "rubocop-rails", "~> 2.23", require: false
   gem "rubocop-rspec", "~> 2.26", require: false
+  gem "bundler-audit", "~> 0.9", require: false
 end
 
 group :development do

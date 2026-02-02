@@ -67,7 +67,26 @@ jobs:
           fail_ci_if_error: false
 
   lint:
-    name: Lint
+    name: Lint (RuboCop)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Run RuboCop
+        run: bundle exec rubocop --parallel --format github
+
+  graphql-schema:
+    name: Validate GraphQL Schema
     runs-on: ubuntu-latest
 
     steps:
@@ -80,9 +99,25 @@ jobs:
           ruby-version: '3.3'
           bundler-cache: true
 
-      - name: Run RuboCop
-        run: bundle exec rubocop --parallel
-        continue-on-error: true
+      - name: Generate current schema
+        run: |
+          bundle exec rails runner "puts TixApiSchema.to_definition" > current_schema.graphql
+
+      - name: Compare schemas
+        run: |
+          if ! diff -q schema.graphql current_schema.graphql > /dev/null 2>&1; then
+            echo "::error::GraphQL schema is out of date!"
+            echo ""
+            echo "The committed schema.graphql does not match the current schema."
+            echo "Please run the following command and commit the changes:"
+            echo ""
+            echo "  bundle exec rails runner 'puts TixApiSchema.to_definition' > schema.graphql"
+            echo ""
+            echo "Diff:"
+            diff schema.graphql current_schema.graphql || true
+            exit 1
+          fi
+          echo "✅ GraphQL schema is up to date"
 
   security:
     name: Security Scan
@@ -98,8 +133,11 @@ jobs:
           ruby-version: '3.3'
           bundler-cache: true
 
-      - name: Run Brakeman
+      - name: Run Brakeman (Static Analysis)
         run: |
           gem install brakeman
-          brakeman -q -w2 --no-pager
-        continue-on-error: true
+          brakeman -q -w2 --no-pager --format github
+
+      - name: Run Bundle Audit (Vulnerability Scan)
+        run: |
+          bundle exec bundle-audit check --update
