@@ -62,6 +62,13 @@ After seeding:
 
 Visit http://localhost:3000/graphiql in development mode.
 
+## Email Configuration
+
+| Environment | Method | Notes |
+|-------------|--------|-------|
+| Development | Letter Opener | Emails open in browser automatically, no actual sending |
+| Production | SendGrid (free tier) | Uses a personal email as sender proxy. **Check your spam folder** for invitation and notification emails. |
+
 ## Running Tests
 
 ```bash
