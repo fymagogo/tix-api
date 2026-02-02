@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Regenerate GraphQL schema SDL file
+# Run this before committing if you've made GraphQL changes
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+echo "Generating GraphQL schema..."
+bundle exec rails runner "puts TixApiSchema.to_definition" > schema.graphql
+echo "✅ schema.graphql updated"

@@ -34,6 +34,9 @@ docker-compose exec api bin/rails db:setup
 # Install dependencies
 bundle install
 
+# Install git hooks (auto-updates schema, runs RuboCop)
+bin/install-hooks
+
 # Setup environment
 cp .env.example .env
 # Edit .env with your database credentials

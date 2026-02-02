@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Install git hooks for the project
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+echo "Installing git hooks..."
+
+# Create pre-commit hook
+cat > .git/hooks/pre-commit << 'EOF'
+#!/usr/bin/env bash
+# Pre-commit hook: Update GraphQL schema if GraphQL files changed
+
+set -e
+
+# Check if any GraphQL-related files are staged
+GRAPHQL_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E "(app/graphql/|schema\.graphql)" || true)
+
+if [ -n "$GRAPHQL_FILES" ]; then
+  echo "GraphQL files changed, regenerating schema..."
+  
+  # Generate new schema
+  bundle exec rails runner "puts TixApiSchema.to_definition" > schema.graphql.tmp
+  
+  # Check if schema actually changed
+  if ! diff -q schema.graphql schema.graphql.tmp > /dev/null 2>&1; then
+    mv schema.graphql.tmp schema.graphql
+    git add schema.graphql
+    echo "✅ schema.graphql updated and staged"
+  else
+    rm schema.graphql.tmp
+    echo "✅ schema.graphql is already up to date"
+  fi
+fi
+
+# Run RuboCop on staged Ruby files
+STAGED_RB_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.rb$' || true)
+
+if [ -n "$STAGED_RB_FILES" ]; then
+  echo "Running RuboCop on staged files..."
+  echo "$STAGED_RB_FILES" | xargs bundle exec rubocop --force-exclusion
+fi
+
+exit 0
+EOF
+
+chmod +x .git/hooks/pre-commit
+
+echo "✅ Git hooks installed successfully!"
+echo ""
+echo "The pre-commit hook will:"
+echo "  - Auto-update schema.graphql when GraphQL files change"
+echo "  - Run RuboCop on staged Ruby files"
