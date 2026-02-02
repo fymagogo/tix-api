@@ -43,7 +43,7 @@ module Mutations
         value: value,
         httponly: true,
         secure: Rails.env.production?,
-        same_site: :lax,
+        same_site: Rails.env.production? ? :none : :lax,
         expires: expiry.from_now,
         path: "/",
       })
@@ -53,7 +53,7 @@ module Mutations
       response.delete_cookie(name.to_s, {
         httponly: true,
         secure: Rails.env.production?,
-        same_site: :lax,
+        same_site: Rails.env.production? ? :none : :lax,
         path: "/",
       })
     end
