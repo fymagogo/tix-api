@@ -79,4 +79,3 @@ bundle exec rspec
 
 All GraphQL queries go to: `POST /graphql`
 
-See [docs/API.md](../docs/API.md) for full documentation.
