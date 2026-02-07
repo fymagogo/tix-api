@@ -1,4 +1,4 @@
 open_ticket_reminder:
-  cron: "10 11 * * *"  # 11:10 AM daily (temporary for testing)
+  cron: "0 8 * * *"  # 8:00 AM daily
   class: OpenTicketReminderJob
   description: "Send daily reminder emails to agents with open tickets"
