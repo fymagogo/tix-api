@@ -4,3 +4,7 @@
   - [ticket_assignment, 10]
   - [mailers, 5]
   - [exports, 3]
+
+# Enable scheduler
+:scheduler:
+  :enabled: true
